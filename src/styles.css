@@ -781,6 +781,10 @@ textarea {
   font-weight: 900;
 }
 
+.cal-day.sunday .n {
+  color: #c66;
+}
+
 .cal-day.sel {
   border-color: var(--app-accent);
   background: var(--app-accent-soft);
@@ -797,6 +801,132 @@ textarea {
   height: 6px;
   border-radius: 50%;
   opacity: 0.85;
+}
+
+/* ---------- 선택한 날의 기록 카드 ---------- */
+.de-card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--app-card);
+  border: 1px solid var(--app-line);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 10px;
+}
+
+.de-ico {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.de-ico.small {
+  width: 34px;
+  height: 34px;
+  font-size: 15px;
+}
+
+.de-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.de-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.de-chip {
+  display: inline-block;
+  background: var(--app-accent-soft);
+  color: var(--app-accent);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.de-date {
+  font-size: 12px;
+  color: var(--app-sub);
+  font-variant-numeric: tabular-nums;
+}
+
+.de-q {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.de-a {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 13.5px;
+  color: #6b5d50;
+  line-height: 1.65;
+  margin-top: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.de-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  border-top: 1px solid var(--app-line);
+  margin-top: 12px;
+  padding-top: 10px;
+  font-size: 12px;
+  color: var(--app-sub);
+}
+
+.de-chev {
+  align-self: center;
+  font-size: 20px;
+  color: var(--app-sub);
+  flex-shrink: 0;
+}
+
+/* 다른 날 기록 — 컴팩트 줄 */
+.ce-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--app-card);
+  border: 1px solid var(--app-line);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+.ce-q {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ce-date {
+  font-size: 11.5px;
+  color: var(--app-sub);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- 타임라인 ---------- */
@@ -899,59 +1029,6 @@ textarea {
   color: var(--app-sub);
 }
 
-.shelf-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  align-items: end;
-  padding: 0 10px;
-}
-
-.shelf-book {
-  background: none;
-  border: none;
-  padding: 0;
-  display: block;
-}
-
-.shelf-book img,
-.shelf-book .ph {
-  width: 100%;
-  aspect-ratio: 2 / 3;
-  object-fit: cover;
-  border-radius: 3px 7px 7px 3px;
-  box-shadow:
-    0 8px 14px rgba(70, 50, 30, 0.28),
-    0 2px 4px rgba(70, 50, 30, 0.18);
-  display: block;
-}
-
-.shelf-book .ph {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px 6px;
-  text-align: center;
-}
-
-.shelf-book .ph .pt {
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1.35;
-  word-break: keep-all;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.shelf-book .ph .pa {
-  font-size: 9.5px;
-  opacity: 0.75;
-}
-
 /* 선반 판자 */
 .shelf-plank {
   height: 12px;
@@ -960,7 +1037,220 @@ textarea {
   box-shadow:
     0 5px 8px rgba(120, 90, 50, 0.25),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  margin: -2px 2px 24px;
+  margin: -6px 8px 26px;
+}
+
+/* 읽는 중 — 대형 카드 */
+.feat {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  background: var(--app-card);
+  border: 1px solid var(--app-line);
+  border-radius: 18px;
+  padding: 18px 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.feat-cover {
+  width: 92px;
+  height: 128px;
+  object-fit: cover;
+  border-radius: 4px 9px 9px 4px;
+  flex-shrink: 0;
+  box-shadow: 0 10px 16px rgba(70, 50, 30, 0.28);
+}
+
+.feat-cover.ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 8px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+.feat-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.feat-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.feat-title {
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+
+.feat-author {
+  font-size: 12.5px;
+  color: var(--app-sub);
+  margin-top: 3px;
+}
+
+.feat-prog {
+  font-size: 13px;
+  color: var(--app-sub);
+  margin-top: 9px;
+  font-variant-numeric: tabular-nums;
+}
+
+.feat-prog b {
+  color: var(--app-accent);
+  font-size: 15px;
+  margin-right: 4px;
+}
+
+.feat .progress-bar {
+  margin-top: 5px;
+}
+
+.feat-meta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--app-sub);
+  margin-top: 9px;
+}
+
+/* 상태 칩 */
+.bk-status {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 8px;
+}
+
+.bk-status.reading {
+  background: #fbe3dc;
+  color: #b85340;
+}
+
+.bk-status.done {
+  background: #e9efdd;
+  color: #5f7a3d;
+}
+
+.bk-status.paused {
+  background: #f7ecd2;
+  color: #9a7a2e;
+}
+
+.bk-cat {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 8px;
+  background: var(--app-accent-soft);
+  color: var(--app-accent);
+}
+
+/* 내 책장 필터 */
+.filter-chips {
+  display: flex;
+  gap: 8px;
+  margin: 0 2px 12px;
+  flex-wrap: wrap;
+}
+
+.filter-chips button {
+  border: 1.5px solid var(--app-line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--app-sub);
+}
+
+.filter-chips button.active {
+  border-color: var(--app-accent);
+  color: var(--app-accent);
+}
+
+/* 내 책장 — 책 줄 */
+.bk-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  background: var(--app-card);
+  border: 1px solid var(--app-line);
+  border-radius: 16px;
+  padding: 13px 14px;
+  margin-bottom: 10px;
+}
+
+.bk-cover {
+  width: 46px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 3px 6px 6px 3px;
+  flex-shrink: 0;
+  box-shadow: 0 3px 7px rgba(70, 50, 30, 0.2);
+}
+
+.bk-cover.ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4px;
+  font-size: 9.5px;
+  font-weight: 800;
+  line-height: 1.35;
+  word-break: keep-all;
+  overflow: hidden;
+}
+
+.bk-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.bk-info .t {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+
+.bk-info .a {
+  font-size: 12px;
+  color: var(--app-sub);
+  margin-top: 3px;
+}
+
+.bk-info .c {
+  font-size: 11.5px;
+  color: var(--app-sub);
+  margin-top: 4px;
+}
+
+.bk-right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bk-date {
+  font-size: 11.5px;
+  color: var(--app-sub);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- 책 상세 ---------- */

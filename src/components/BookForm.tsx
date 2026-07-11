@@ -279,7 +279,7 @@ export default function BookForm({ initial, kakaoApiKey, onSave, onClose, onDele
           <select value={status} onChange={(e) => setStatus(e.target.value as Book['status'])}>
             <option value="reading">읽는 중</option>
             <option value="done">완독</option>
-            <option value="paused">잠시 멈춤</option>
+            <option value="paused">보류</option>
           </select>
         </div>
         <div className="field">

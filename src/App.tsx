@@ -397,19 +397,21 @@ function TimelineTab({
   )
 }
 
-/* ---------- 책장 탭 (선반 위 책 표지) ---------- */
-const SHELF_GROUPS: { status: Book['status']; label: string }[] = [
-  { status: 'reading', label: '읽는 중' },
-  { status: 'done', label: '완독' },
-  { status: 'paused', label: '잠시 멈춤' },
-]
+/* ---------- 책장 탭 ---------- */
+const STATUS_META: Record<Book['status'], { label: string; cls: string }> = {
+  reading: { label: '읽는 중', cls: 'reading' },
+  done: { label: '완독', cls: 'done' },
+  paused: { label: '보류', cls: 'paused' },
+}
 
-const BOOKS_PER_SHELF = 4
-
-function chunk<T>(arr: T[], size: number): T[][] {
-  const out: T[][] = []
-  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size))
-  return out
+function BookCover({ book, className }: { book: Book; className: string }) {
+  if (book.coverDataUrl) return <img className={className} src={book.coverDataUrl} alt="" />
+  const ph = bookPlaceholderTheme(book)
+  return (
+    <div className={`${className} ph`} style={{ background: ph.bg, color: ph.ink }}>
+      <span>{book.title}</span>
+    </div>
+  )
 }
 
 function ShelfTab({
@@ -421,56 +423,146 @@ function ShelfTab({
   onAdd: () => void
   onOpen: (b: Book) => void
 }) {
+  const [filter, setFilter] = useState<'all' | Book['status']>('all')
+  const today = todayStr()
+
+  // 책별 최신/오늘 기록 요약
+  const info = useMemo(() => {
+    const m = new Map<string, { last?: Entry; todayEntry?: Entry; count: number }>()
+    for (const b of data.books) m.set(b.id, { count: 0 })
+    for (const e of sortEntriesDesc(data.entries)) {
+      const i = m.get(e.bookId)
+      if (!i) continue
+      i.count++
+      if (!i.last) i.last = e
+      if (e.date === today && !i.todayEntry) i.todayEntry = e
+    }
+    return m
+  }, [data, today])
+
+  const reading = data.books.filter((b) => b.status === 'reading')
+  const filtered = filter === 'all' ? data.books : data.books.filter((b) => b.status === filter)
+
+  const FILTERS: { key: 'all' | Book['status']; label: string }[] = [
+    { key: 'all', label: '전체' },
+    { key: 'reading', label: '읽는 중' },
+    { key: 'done', label: '완독' },
+    { key: 'paused', label: '보류' },
+  ]
+
   return (
     <>
       <button className="btn secondary" style={{ marginTop: 10 }} onClick={onAdd}>
         ＋ 새 책 추가
       </button>
-      {data.books.length === 0 ? (
+
+      {data.books.length === 0 && (
         <div className="empty">
           <span className="big">📚</span>읽고 있는 책을 추가해 보세요.
         </div>
-      ) : (
-        SHELF_GROUPS.map((g) => {
-          const books = data.books.filter((b) => b.status === g.status)
-          if (books.length === 0) return null
-          return (
-            <section key={g.status}>
-              <div className="shelf-head">
-                <span>{g.label}</span>
-                <span className="cnt">{books.length}권</span>
-              </div>
-              {chunk(books, BOOKS_PER_SHELF).map((row, i) => (
-                <div key={i}>
-                  <div className="shelf-row">
-                    {row.map((b) => (
-                      <ShelfBook key={b.id} book={b} onClick={() => onOpen(b)} />
-                    ))}
+      )}
+
+      {reading.length > 0 && (
+        <>
+          <div className="shelf-head">
+            <span>읽는 중</span>
+            <span className="cnt">{reading.length}권</span>
+          </div>
+          {reading.map((b) => {
+            const i = info.get(b.id)
+            const last = i?.last
+            const pctNum = b.totalPages && last ? Math.min(100, (last.page / b.totalPages) * 100) : 0
+            const lines = i?.todayEntry
+              ? [i.todayEntry.read, i.todayEntry.note, i.todayEntry.doit, i.todayEntry.success].filter(Boolean).length
+              : 0
+            return (
+              <div key={b.id}>
+                <div className="feat" onClick={() => onOpen(b)} role="button">
+                  <BookCover book={b} className="feat-cover" />
+                  <div className="feat-info">
+                    <div className="feat-chips">
+                      <span className="bk-status reading">읽는 중</span>
+                      {b.category && <span className="bk-cat">{b.category}</span>}
+                    </div>
+                    <div className="feat-title">{b.title}</div>
+                    {b.author && <div className="feat-author">{b.author}</div>}
+                    {b.totalPages > 0 && (
+                      <>
+                        <div className="feat-prog">
+                          <b>{Math.round(pctNum)}%</b> {last?.page ?? 0} / {b.totalPages}p
+                        </div>
+                        <div className="progress-bar">
+                          <div style={{ width: `${pctNum}%` }} />
+                        </div>
+                      </>
+                    )}
+                    <div className="feat-meta">
+                      {i?.todayEntry ? (
+                        <>
+                          {i.todayEntry.minutes ? <span>🕐 오늘 {i.todayEntry.minutes}분 읽음</span> : <span>🕐 오늘 기록함</span>}
+                          <span>✏️ {lines}줄 기록</span>
+                        </>
+                      ) : (
+                        <span>✏️ 기록 {i?.count ?? 0}회{last ? ` · 마지막 ${last.date}` : ''}</span>
+                      )}
+                    </div>
                   </div>
-                  <div className="shelf-plank" />
+                  <span className="de-chev">›</span>
                 </div>
-              ))}
-            </section>
-          )
-        })
+                <div className="shelf-plank" />
+              </div>
+            )
+          })}
+        </>
+      )}
+
+      {data.books.length > 0 && (
+        <>
+          <div className="shelf-head">
+            <span>내 책장</span>
+            <span className="cnt">{data.books.length}권</span>
+          </div>
+          <div className="filter-chips">
+            {FILTERS.map((f) => (
+              <button
+                key={f.key}
+                className={filter === f.key ? 'active' : ''}
+                onClick={() => setFilter(f.key)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          {filtered.length === 0 ? (
+            <div className="empty" style={{ padding: '24px 20px' }}>
+              해당하는 책이 없어요.
+            </div>
+          ) : (
+            filtered.map((b) => {
+              const st = STATUS_META[b.status]
+              const last = info.get(b.id)?.last
+              return (
+                <div className="bk-row" key={b.id} onClick={() => onOpen(b)} role="button">
+                  <BookCover book={b} className="bk-cover" />
+                  <div className="bk-info">
+                    <div className="t">{b.title}</div>
+                    {b.author && <div className="a">{b.author}</div>}
+                    {b.category && <div className="c">{b.category}</div>}
+                  </div>
+                  <div className="bk-right">
+                    <span className={`bk-status ${st.cls}`}>{st.label}</span>
+                    <span className="bk-date">
+                      {(last?.date ?? b.createdAt.slice(0, 10)).split('-').join('.')}
+                    </span>
+                  </div>
+                  <span className="de-chev">›</span>
+                </div>
+              )
+            })
+          )}
+        </>
       )}
     </>
-  )
-}
-
-function ShelfBook({ book, onClick }: { book: Book; onClick: () => void }) {
-  const ph = bookPlaceholderTheme(book)
-  return (
-    <button className="shelf-book" onClick={onClick} title={book.title}>
-      {book.coverDataUrl ? (
-        <img src={book.coverDataUrl} alt={book.title} />
-      ) : (
-        <div className="ph" style={{ background: ph.bg, color: ph.ink }}>
-          <span className="pt">{book.title}</span>
-          <span className="pa">{book.author}</span>
-        </div>
-      )}
-    </button>
   )
 }
 

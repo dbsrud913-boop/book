@@ -1,8 +1,7 @@
 import { useMemo, useState } from 'react'
 import type { Book, Entry } from '../types'
 import { getTheme } from '../themes'
-import { bookById, todayStr } from '../utils'
-import EntryListItem from './EntryListItem'
+import { bookById, sortEntriesDesc, todayStr } from '../utils'
 
 interface Props {
   entries: Entry[]
@@ -11,12 +10,23 @@ interface Props {
 }
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
+const ICONS = ['🌅', '🌿', '📖', '💭', '☕️']
+const CIRCLES = ['#FBE9DC', '#EAF0DF', '#F3E7EE', '#EBF0EE', '#FBEFDA']
 
 function fmt(y: number, m: number, d: number): string {
   return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
 }
 
-/** 월간 캘린더 — 기록이 있는 날은 카드 컬러 점으로 표시, 날짜를 누르면 그날 기록이 아래에 */
+function iconIndex(e: Entry): number {
+  return [...e.id].reduce((a, c) => a + c.charCodeAt(0), 0) % ICONS.length
+}
+
+/** 기록 줄 수 (문장/질문/답/남은 질문 중 채운 개수) */
+function lineCount(e: Entry): number {
+  return [e.read, e.note, e.doit, e.success].filter(Boolean).length
+}
+
+/** 월간 캘린더 + 선택한 날의 기록 카드 */
 export default function CalendarView({ entries, books, onOpenCard }: Props) {
   const today = todayStr()
   const [ym, setYm] = useState(() => {
@@ -34,6 +44,8 @@ export default function CalendarView({ entries, books, onOpenCard }: Props) {
     }
     return m
   }, [entries])
+
+  const sorted = useMemo(() => sortEntriesDesc(entries), [entries])
 
   const firstDay = new Date(ym.y, ym.m, 1).getDay()
   const daysInMonth = new Date(ym.y, ym.m + 1, 0).getDate()
@@ -55,6 +67,8 @@ export default function CalendarView({ entries, books, onOpenCard }: Props) {
   }
 
   const selectedEntries = byDate.get(selected) ?? []
+  const otherRecent = sorted.filter((e) => e.date !== selected).slice(0, 5)
+  const [, selM, selD] = selected.split('-')
 
   return (
     <>
@@ -87,9 +101,9 @@ export default function CalendarView({ entries, books, onOpenCard }: Props) {
             const dayEntries = byDate.get(date) ?? []
             const cls = [
               'cal-day',
+              i % 7 === 0 ? 'sunday' : '',
               date === selected ? 'sel' : '',
               date === today ? 'today' : '',
-              dayEntries.length > 0 ? 'has' : '',
             ]
               .filter(Boolean)
               .join(' ')
@@ -108,22 +122,56 @@ export default function CalendarView({ entries, books, onOpenCard }: Props) {
       </div>
 
       <div className="section-title">
-        {selected === today ? '오늘' : selected.slice(5).replace('-', '월 ') + '일'}의 기록
+        {selM}월 {selD}일의 기록
       </div>
+
       {selectedEntries.length === 0 ? (
         <div className="empty" style={{ padding: '24px 20px' }}>
           이날의 기록이 없어요.
         </div>
       ) : (
-        selectedEntries.map((e) => (
-          <EntryListItem
-            key={e.id}
-            entry={e}
-            book={bookById(books, e.bookId)}
-            onClick={() => onOpenCard(e.id)}
-          />
-        ))
+        selectedEntries.map((e) => {
+          const book = bookById(books, e.bookId)
+          if (!book) return null
+          const idx = iconIndex(e)
+          return (
+            <div className="de-card" key={e.id} onClick={() => onOpenCard(e.id)} role="button">
+              <div className="de-ico" style={{ background: CIRCLES[idx] }}>
+                {ICONS[idx]}
+              </div>
+              <div className="de-body">
+                <div className="de-top">
+                  <span className="de-chip">오늘의 질문</span>
+                  <span className="de-date">{e.date}</span>
+                </div>
+                <div className="de-q">{e.note || `“${e.read}”`}</div>
+                {e.doit && <div className="de-a">{e.doit}</div>}
+                <div className="de-meta">
+                  <span>📖 {book.title}</span>
+                  {e.minutes ? <span>🕐 {e.minutes}분 읽음</span> : null}
+                  <span>✏️ {lineCount(e)}줄 기록</span>
+                </div>
+              </div>
+              <span className="de-chev">›</span>
+            </div>
+          )
+        })
       )}
+
+      {otherRecent.map((e) => {
+        const idx = iconIndex(e)
+        return (
+          <div className="ce-row" key={e.id} onClick={() => onOpenCard(e.id)} role="button">
+            <div className="de-ico small" style={{ background: CIRCLES[idx] }}>
+              {ICONS[idx]}
+            </div>
+            <span className="de-chip">오늘의 질문</span>
+            <span className="ce-q">{e.note || `“${e.read}”`}</span>
+            <span className="ce-date">{e.date}</span>
+            <span className="de-chev">›</span>
+          </div>
+        )
+      })}
     </>
   )
 }

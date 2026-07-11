@@ -21,7 +21,7 @@ export function bookPlaceholderTheme(book: Book) {
 const STATUS_LABEL: Record<Book['status'], string> = {
   reading: '읽는 중',
   done: '완독 🎉',
-  paused: '잠시 멈춤',
+  paused: '보류',
 }
 
 /** 책 상세 — 함께한 기간·기록 통계와 그 책의 모든 기록 */
