@@ -152,16 +152,28 @@ export default function App() {
 
       <nav className="tabbar">
         <button className={tab === 'today' ? 'active' : ''} onClick={() => setTab('today')}>
-          <span className="ico">✏️</span>오늘
+          <span className="ico">
+            <IconPencil />
+          </span>
+          오늘
         </button>
         <button className={tab === 'timeline' ? 'active' : ''} onClick={() => setTab('timeline')}>
-          <span className="ico">🗂</span>나의 기록
+          <span className="ico">
+            <IconCalendar />
+          </span>
+          나의 기록
         </button>
         <button className={tab === 'shelf' ? 'active' : ''} onClick={() => setTab('shelf')}>
-          <span className="ico">📚</span>책장
+          <span className="ico">
+            <IconBooks />
+          </span>
+          책장
         </button>
         <button className={tab === 'settings' ? 'active' : ''} onClick={() => setTab('settings')}>
-          <span className="ico">⚙️</span>설정
+          <span className="ico">
+            <IconGear />
+          </span>
+          설정
         </button>
       </nav>
 
@@ -211,6 +223,43 @@ export default function App() {
         />
       )}
     </>
+  )
+}
+
+/* ---------- 탭바 라인 아이콘 ---------- */
+function IconPencil() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+    </svg>
+  )
+}
+
+function IconCalendar() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="5" width="18" height="16" rx="2.5" />
+      <path d="M3 10h18M8 3v4M16 3v4M12 14v4M10 16h4" />
+    </svg>
+  )
+}
+
+function IconBooks() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5.5 4h3v16h-3zM11.5 4h3v16h-3z" />
+      <path d="M17.6 5.2l2.9.8-4 14.5-2.9-.8z" />
+    </svg>
+  )
+}
+
+function IconGear() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3.4" />
+      <path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1" />
+    </svg>
   )
 }
 

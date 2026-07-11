@@ -128,7 +128,14 @@ textarea {
 }
 
 .tabbar button .ico {
-  font-size: 20px;
+  height: 23px;
+  display: flex;
+  align-items: center;
+}
+
+.tabbar button .ico svg {
+  width: 22px;
+  height: 22px;
 }
 
 .tabbar button.active {
