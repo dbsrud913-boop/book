@@ -215,9 +215,6 @@ export default function App() {
 }
 
 /* ---------- 오늘 탭 (메인) ---------- */
-const QA_ICONS = ['🌅', '🌿', '📖', '💭', '☕️']
-const QA_CIRCLES = ['#FBE9DC', '#EAF0DF', '#F3E7EE', '#EBF0EE', '#FBEFDA']
-
 function TodayTab({
   data,
   sorted,
@@ -265,7 +262,14 @@ function TodayTab({
         ) : (
           <>
             <div className="hero-sub">오늘의 기록 {todayEntries.length}개 완료 ✔</div>
-            <div className="hero-q">{todayEntries[0].note || `“${todayEntries[0].read}”`}</div>
+            <div
+              className="hero-q"
+              style={{
+                fontSize: (todayEntries[0].note || '').length > 60 ? 17 : 21,
+              }}
+            >
+              {todayEntries[0].note || '오늘의 기록을 남겼어요.'}
+            </div>
             <div className="hero-actions">
               <button className="btn small" onClick={() => onOpenCard(todayEntries[0].id)}>
                 🖼 카드 보기
@@ -286,14 +290,19 @@ function TodayTab({
               전체 보기 ›
             </button>
           </div>
-          {recent.map((e, i) => {
+          {recent.map((e) => {
             const book = bookById(data.books, e.bookId)
             if (!book) return null
+            const ph = bookPlaceholderTheme(book)
             return (
               <div className="qa-item" key={e.id} onClick={() => onOpenCard(e.id)} role="button">
-                <div className="qa-ico" style={{ background: QA_CIRCLES[i % QA_CIRCLES.length] }}>
-                  {QA_ICONS[i % QA_ICONS.length]}
-                </div>
+                {book.coverDataUrl ? (
+                  <img className="qa-cover" src={book.coverDataUrl} alt="" />
+                ) : (
+                  <div className="qa-cover ph" style={{ background: ph.bg, color: ph.ink }}>
+                    📖
+                  </div>
+                )}
                 <div className="qa-body">
                   <div className="q">{e.note || `“${e.read}”`}</div>
                   <div className="a">{e.doit || e.read}</div>
@@ -308,14 +317,6 @@ function TodayTab({
         </>
       )}
 
-      <div className="quote-banner">
-        <span className="qm">❝</span>
-        <p>
-          책은 답을 주지 않는다.
-          <br />
-          좋은 질문을 남길 뿐이다.
-        </p>
-      </div>
     </>
   )
 }
