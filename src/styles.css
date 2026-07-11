@@ -286,158 +286,232 @@ textarea {
   font-size: 14px;
 }
 
-/* ---------- 기록 카드 (내보내기 대상) ---------- */
+/* ---------- 기록 카드 (내보내기 대상) ----------
+   인스타그램 규격 고정 비율(4:5 / 1:1).
+   내부 크기는 전부 em — 카드 root font-size(scale)로 자동 축소된다. */
 .card-wrap {
   display: flex;
   justify-content: center;
   margin: 12px 0;
 }
 
-.record-card {
-  width: 420px;
+.record-card.rc2 {
+  width: 432px;
   max-width: 100%;
-  /* 기본 4:5 비율, 내용이 길면 아래로 늘어난다 */
-  min-height: 525px;
-  padding: 26px;
+  border-radius: 26px;
+  padding: 1.7em;
   display: flex;
+  overflow: hidden;
 }
 
-.record-card .frame {
-  border: 1px solid;
+.rc2-in {
   flex: 1;
-  padding: 30px 26px 24px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  position: relative;
 }
 
-.rc-top {
+.rc2-ghost {
+  position: absolute;
+  top: -0.18em;
+  right: -0.14em;
+  font-size: 7.6em;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0.11;
+  pointer-events: none;
+}
+
+.rc2-top {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: 1em;
 }
 
-.rc-label {
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: -0.2px;
+.rc2-chip {
+  display: inline-block;
+  padding: 0.5em 1em;
+  border-radius: 999px;
+  font-size: 0.78em;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 
-.rc-days {
+.rc2-day {
   text-align: right;
   flex-shrink: 0;
 }
 
-.rc-days .d1 {
-  font-size: 16px;
+.rc2-day .n {
+  font-size: 1.15em;
   font-weight: 900;
+  letter-spacing: 0.04em;
 }
 
-.rc-days .d2 {
-  font-size: 10.5px;
-  margin-top: 2px;
+.rc2-day .s {
+  font-size: 0.7em;
+  margin-top: 0.3em;
 }
 
-.rc-title {
-  font-size: 21px;
-  font-weight: 900;
-  line-height: 1.35;
-  letter-spacing: -0.5px;
-  margin-top: 10px;
-  word-break: keep-all;
-}
-
-.rc-meta {
-  font-size: 11.5px;
-  margin-top: 10px;
-  line-height: 1.6;
-}
-
-.rc-hr {
-  border: none;
-  border-top: 1px solid;
-  margin: 14px 0 2px;
-  width: 46px;
-}
-
-.rc-body {
-  flex: 1;
-  margin-top: 4px;
-}
-
-.rc-sec {
-  margin-top: 13px;
-}
-
-.rc-sec-title {
-  font-size: 12.5px;
+.rc2-cap {
+  font-size: 0.72em;
   font-weight: 800;
-  margin-bottom: 5px;
+  letter-spacing: 0.22em;
+  margin-bottom: 0.7em;
 }
 
-.rc-sec-text {
-  font-size: 13.5px;
-  line-height: 1.7;
+.rc2-hero {
+  margin-top: 1.7em;
+  position: relative;
+}
+
+.rc2-q {
+  font-size: 1.55em;
+  font-weight: 900;
+  line-height: 1.48;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+  white-space: pre-wrap;
+}
+
+.rc2-block {
+  margin-top: 1.5em;
+}
+
+.rc2-quote {
+  border-left: 3px solid;
+  padding-left: 1em;
+  font-size: 0.94em;
+  line-height: 1.75;
+  font-style: italic;
   white-space: pre-wrap;
   word-break: keep-all;
 }
 
-.rc-sec-text.quote {
-  font-style: italic;
+.rc2-think {
+  font-size: 0.94em;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: keep-all;
 }
 
-.rc-bottom {
-  border-top: 1px solid;
-  margin-top: 14px;
-  padding-top: 14px;
+.rc2-keep {
+  margin-top: 1.3em;
+  font-size: 0.82em;
+  line-height: 1.6;
+  font-style: italic;
+  word-break: keep-all;
+}
+
+.rc2-spacer {
+  flex: 1;
+  min-height: 1em;
+}
+
+.rc2-meta {
+  font-size: 0.72em;
+  margin-bottom: 0.9em;
+}
+
+.rc2-panel {
+  border-radius: 1.1em;
+  padding: 0.95em 1.05em;
   display: flex;
-  gap: 12px;
+  gap: 0.9em;
   align-items: center;
 }
 
-.rc-cover {
-  width: 44px;
-  height: 60px;
+.rc2-cover {
+  width: 2.9em;
+  height: 4em;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 0.4em;
   flex-shrink: 0;
-  background: rgba(127, 127, 127, 0.2);
 }
 
-.rc-cover-ph {
-  width: 44px;
-  height: 60px;
-  border-radius: 4px;
-  flex-shrink: 0;
+.rc2-cover.ph {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  border: 1px solid;
+  font-size: 1em;
 }
 
-.rc-bookinfo {
+.rc2-bookinfo {
   flex: 1;
   min-width: 0;
 }
 
-.rc-bookinfo .t {
-  font-size: 13px;
+.rc2-bookinfo .t {
+  font-size: 0.88em;
   font-weight: 800;
   line-height: 1.4;
   word-break: keep-all;
 }
 
-.rc-bookinfo .a {
-  font-size: 11.5px;
-  margin-top: 3px;
+.rc2-bookinfo .a {
+  font-size: 0.72em;
+  margin-top: 0.35em;
 }
 
-.rc-sign {
-  font-size: 11.5px;
-  font-weight: 700;
+.rc2-prog {
   flex-shrink: 0;
-  align-self: flex-end;
+  width: 5.6em;
+  text-align: right;
+}
+
+.rc2-prog .p {
+  font-size: 0.95em;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.rc2-prog .bar {
+  height: 0.35em;
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 0.4em 0;
+}
+
+.rc2-prog .bar > div {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.rc2-prog .pg {
+  font-size: 0.65em;
+  font-variant-numeric: tabular-nums;
+}
+
+.rc2-sign {
+  margin-top: 0.8em;
+  font-size: 0.78em;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* 비율 토글 */
+.ratio-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.ratio-toggle button {
+  flex: 1;
+  border: 1.5px solid var(--app-line);
+  background: #fff;
+  border-radius: 10px;
+  padding: 9px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--app-sub);
+}
+
+.ratio-toggle button.active {
+  border-color: var(--app-accent);
+  background: var(--app-accent-soft);
+  color: var(--app-accent);
 }
 
 /* ---------- 타임라인 ---------- */
