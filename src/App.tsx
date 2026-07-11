@@ -6,6 +6,7 @@ import {
   currentStreak,
   progressPercent,
   sortEntriesDesc,
+  todayStr,
   totalRecordedDays,
 } from './utils'
 import EntryForm from './components/EntryForm'
@@ -104,7 +105,7 @@ export default function App() {
           📚 책에 묻다 <span className="app-subtitle">오늘의 독서</span>
         </div>
         <div className="app-streak">
-          연속 <b>{streak}일</b> · 누적 <b>{totalDays}일</b>
+          🔥 연속 <b>{streak}일</b> · 누적 <b>{totalDays}일</b>
         </div>
       </header>
 
@@ -115,6 +116,7 @@ export default function App() {
             sorted={sorted}
             onWrite={() => setShowEntryForm(true)}
             onOpenCard={(id) => setViewEntryId(id)}
+            onGoTimeline={() => setTab('timeline')}
           />
         )}
         {tab === 'timeline' && (
@@ -153,7 +155,7 @@ export default function App() {
           <span className="ico">✏️</span>오늘
         </button>
         <button className={tab === 'timeline' ? 'active' : ''} onClick={() => setTab('timeline')}>
-          <span className="ico">🗂</span>기록
+          <span className="ico">🗂</span>나의 기록
         </button>
         <button className={tab === 'shelf' ? 'active' : ''} onClick={() => setTab('shelf')}>
           <span className="ico">📚</span>책장
@@ -212,40 +214,108 @@ export default function App() {
   )
 }
 
-/* ---------- 오늘 탭 ---------- */
+/* ---------- 오늘 탭 (메인) ---------- */
+const QA_ICONS = ['🌅', '🌿', '📖', '💭', '☕️']
+const QA_CIRCLES = ['#FBE9DC', '#EAF0DF', '#F3E7EE', '#EBF0EE', '#FBEFDA']
+
 function TodayTab({
   data,
   sorted,
   onWrite,
   onOpenCard,
+  onGoTimeline,
 }: {
   data: JournalData
   sorted: Entry[]
   onWrite: () => void
   onOpenCard: (id: string) => void
+  onGoTimeline: () => void
 }) {
+  const today = todayStr()
+  const todayEntries = sorted.filter((e) => e.date === today)
   const recent = sorted.slice(0, 5)
+
   return (
     <>
-      <button className="btn" style={{ marginTop: 10 }} onClick={onWrite}>
-        ✏️ 오늘의 기록 쓰기
-      </button>
-
-      {recent.length === 0 ? (
-        <div className="empty">
-          <span className="big">🌱</span>
-          아직 기록이 없어요.
+      <div className="today-top">
+        <p className="today-tagline">
+          책은 답을 주지 않는다.
           <br />
-          오늘 읽은 책에서 나에게 던질 질문 하나를 건져볼까요?
-        </div>
-      ) : (
+          좋은 질문을 남길 뿐이다.
+        </p>
+        <button className="cal-link" onClick={onGoTimeline}>
+          📅 기록 캘린더 보기 ›
+        </button>
+      </div>
+
+      <div className="hero">
+        {todayEntries.length === 0 ? (
+          <>
+            <div className="hero-sub">아직 오늘의 기록이 없어요</div>
+            <div className="hero-q">
+              책 속 문장이 오늘,
+              <br />
+              나에게 어떤 질문을 던졌나요?
+            </div>
+            <div className="hero-hint">질문을 받고, 생각을 남겨보세요.</div>
+            <button className="btn hero-btn" onClick={onWrite}>
+              ✏️ 오늘의 기록 쓰기
+            </button>
+          </>
+        ) : (
+          <>
+            <div className="hero-sub">오늘의 기록 {todayEntries.length}개 완료 ✔</div>
+            <div className="hero-q">{todayEntries[0].note || `“${todayEntries[0].read}”`}</div>
+            <div className="hero-actions">
+              <button className="btn small" onClick={() => onOpenCard(todayEntries[0].id)}>
+                🖼 카드 보기
+              </button>
+              <button className="btn ghost small" onClick={onWrite}>
+                ✏️ 기록 더 쓰기
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+      {recent.length > 0 && (
         <>
-          <div className="section-title">최근 기록</div>
-          {recent.map((e) => (
-            <EntryListItem key={e.id} entry={e} book={bookById(data.books, e.bookId)} onClick={() => onOpenCard(e.id)} />
-          ))}
+          <div className="sec-row">
+            <span className="sec-title">🔖 최근 나의 답변</span>
+            <button className="link-btn" onClick={onGoTimeline}>
+              전체 보기 ›
+            </button>
+          </div>
+          {recent.map((e, i) => {
+            const book = bookById(data.books, e.bookId)
+            if (!book) return null
+            return (
+              <div className="qa-item" key={e.id} onClick={() => onOpenCard(e.id)} role="button">
+                <div className="qa-ico" style={{ background: QA_CIRCLES[i % QA_CIRCLES.length] }}>
+                  {QA_ICONS[i % QA_ICONS.length]}
+                </div>
+                <div className="qa-body">
+                  <div className="q">{e.note || `“${e.read}”`}</div>
+                  <div className="a">{e.doit || e.read}</div>
+                </div>
+                <div className="qa-meta">
+                  {e.date.split('-').join('.')}
+                  <span className="chev">›</span>
+                </div>
+              </div>
+            )
+          })}
         </>
       )}
+
+      <div className="quote-banner">
+        <span className="qm">❝</span>
+        <p>
+          책은 답을 주지 않는다.
+          <br />
+          좋은 질문을 남길 뿐이다.
+        </p>
+      </div>
     </>
   )
 }
