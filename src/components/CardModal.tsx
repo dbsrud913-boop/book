@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { toPng } from 'html-to-image'
 import type { Book, Entry, Settings } from '../types'
 import RecordCard, { type CardRatio } from './RecordCard'
+import { THEMES } from '../themes'
 import { bookStartDate } from '../utils'
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
   book: Book
   entries: Entry[]
   settings: Settings
+  onChangeTheme: (themeId: string) => void
   onEdit: () => void
   onDelete: () => void
   onClose: () => void
@@ -20,6 +22,7 @@ export default function CardModal({
   book,
   entries,
   settings,
+  onChangeTheme,
   onEdit,
   onDelete,
   onClose,
@@ -81,6 +84,23 @@ export default function CardModal({
             <button className={ratio === '11' ? 'active' : ''} onClick={() => setRatio('11')}>
               1:1 정사각 · 1080×1080
             </button>
+          </div>
+        </div>
+
+        <div className="field">
+          <label>카드 톤</label>
+          <div className="theme-grid">
+            {THEMES.map((t) => (
+              <button
+                key={t.id}
+                className={`theme-swatch ${t.id === entry.themeId ? 'active' : ''}`}
+                style={{ background: t.bg, color: t.accent, borderColor: t.line }}
+                title={t.name}
+                onClick={() => onChangeTheme(t.id)}
+              >
+                <i style={{ background: t.accent }} />
+              </button>
+            ))}
           </div>
         </div>
 

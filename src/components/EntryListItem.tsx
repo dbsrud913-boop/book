@@ -1,4 +1,5 @@
 import type { Book, Entry } from '../types'
+import { getTheme } from '../themes'
 import { progressPercent } from '../utils'
 
 interface Props {
@@ -14,7 +15,7 @@ export default function EntryListItem({ entry, book, onClick }: Props) {
   return (
     <div className="tl-item" onClick={onClick} role="button">
       <div className="tl-head">
-        <div className="tl-dot" />
+        <div className="tl-dot" style={{ background: getTheme(entry.themeId).accent }} />
         <div className="tl-book">{book.title}</div>
         <div className="tl-meta">
           {entry.date}

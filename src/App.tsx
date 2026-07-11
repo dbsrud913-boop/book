@@ -86,6 +86,13 @@ export default function App() {
     setDetailBookId(null)
   }
 
+  function setEntryTheme(id: string, themeId: string) {
+    setData((d) => ({
+      ...d,
+      entries: d.entries.map((e) => (e.id === id ? { ...e, themeId } : e)),
+    }))
+  }
+
   function updateSettings(patch: Partial<Settings>) {
     setData((d) => ({ ...d, settings: { ...d.settings, ...patch } }))
   }
@@ -192,6 +199,7 @@ export default function App() {
           book={bookById(data.books, viewEntry.bookId)!}
           entries={data.entries}
           settings={data.settings}
+          onChangeTheme={(tid) => setEntryTheme(viewEntry.id, tid)}
           onEdit={() => {
             setEditEntry(viewEntry)
             setViewEntryId(null)

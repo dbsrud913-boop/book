@@ -640,8 +640,7 @@ textarea {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--app-accent);
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 /* ---------- 타임라인 ---------- */
@@ -672,8 +671,7 @@ textarea {
   height: 10px;
   border-radius: 4px;
   flex-shrink: 0;
-  background: var(--app-accent);
-  opacity: 0.75;
+  opacity: 0.8;
 }
 
 .tl-book {
@@ -927,6 +925,35 @@ textarea {
   border-radius: 999px;
   background: var(--app-accent-soft);
   color: var(--app-accent);
+}
+
+/* ---------- 카드 톤 선택 (뮤트 6색) ---------- */
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.theme-swatch {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  border: 1.5px solid;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-swatch i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: block;
+}
+
+.theme-swatch.active {
+  outline: 2px solid var(--app-ink);
+  outline-offset: 1.5px;
 }
 
 /* ---------- 책 검색 ---------- */

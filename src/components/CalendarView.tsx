@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import type { Book, Entry } from '../types'
+import { getTheme } from '../themes'
 import { bookById, todayStr } from '../utils'
 import EntryListItem from './EntryListItem'
 
@@ -97,7 +98,7 @@ export default function CalendarView({ entries, books, onOpenCard }: Props) {
                 <span className="n">{d}</span>
                 <span className="dots">
                   {dayEntries.slice(0, 3).map((e) => (
-                    <i key={e.id} />
+                    <i key={e.id} style={{ background: getTheme(e.themeId).accent }} />
                   ))}
                 </span>
               </button>
