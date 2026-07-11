@@ -521,6 +521,103 @@ textarea {
   color: var(--app-accent);
 }
 
+/* ---------- 캘린더 ---------- */
+.cal {
+  background: var(--app-card);
+  border: 1px solid var(--app-line);
+  border-radius: 16px;
+  padding: 14px 12px 12px;
+  margin-top: 14px;
+}
+
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.cal-head button {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: var(--app-sub);
+  padding: 2px 14px;
+  line-height: 1;
+}
+
+.cal-title {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.cal-count {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--app-accent);
+  margin-left: 8px;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.cal-wd {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--app-sub);
+  padding: 4px 0 6px;
+}
+
+.cal-wd.sun {
+  color: #c66;
+}
+
+.cal-day {
+  background: none;
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  padding: 4px 0 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-height: 44px;
+}
+
+.cal-day .n {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--app-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.cal-day.today .n {
+  color: var(--app-accent);
+  font-weight: 900;
+}
+
+.cal-day.sel {
+  border-color: var(--app-accent);
+  background: var(--app-accent-soft);
+}
+
+.cal-day .dots {
+  display: flex;
+  gap: 2.5px;
+  height: 6px;
+}
+
+.cal-day .dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+}
+
 /* ---------- 타임라인 ---------- */
 .tl-date {
   font-size: 13px;

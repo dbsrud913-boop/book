@@ -14,6 +14,7 @@ import BookForm from './components/BookForm'
 import CardModal from './components/CardModal'
 import EntryListItem from './components/EntryListItem'
 import BookDetail, { bookPlaceholderTheme } from './components/BookDetail'
+import CalendarView from './components/CalendarView'
 
 type Tab = 'today' | 'timeline' | 'shelf' | 'settings'
 
@@ -260,6 +261,7 @@ function TimelineTab({
   sorted: Entry[]
   onOpenCard: (id: string) => void
 }) {
+  const [view, setView] = useState<'calendar' | 'list'>('calendar')
   const [bookFilter, setBookFilter] = useState<string>('all')
   const filtered = bookFilter === 'all' ? sorted : sorted.filter((e) => e.bookId === bookFilter)
 
@@ -272,7 +274,20 @@ function TimelineTab({
 
   return (
     <>
-      {data.books.length > 1 && (
+      <div className="ratio-toggle" style={{ marginTop: 10 }}>
+        <button className={view === 'calendar' ? 'active' : ''} onClick={() => setView('calendar')}>
+          📅 캘린더
+        </button>
+        <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>
+          ☰ 목록
+        </button>
+      </div>
+
+      {view === 'calendar' && (
+        <CalendarView entries={data.entries} books={data.books} onOpenCard={onOpenCard} />
+      )}
+
+      {view === 'list' && data.books.length > 1 && (
         <div className="book-chips" style={{ marginTop: 10 }}>
           <button
             className={`book-chip ${bookFilter === 'all' ? 'active' : ''}`}
@@ -292,11 +307,13 @@ function TimelineTab({
         </div>
       )}
 
-      {groups.length === 0 ? (
+      {view === 'list' &&
+      groups.length === 0 ? (
         <div className="empty">
           <span className="big">🗂</span>기록이 쌓이면 여기서 모아볼 수 있어요.
         </div>
       ) : (
+        view === 'list' &&
         groups.map((g) => (
           <div key={g.date}>
             <div className="tl-date">{g.date}</div>
