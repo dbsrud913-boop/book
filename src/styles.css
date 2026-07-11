@@ -403,21 +403,25 @@ textarea {
   min-height: 0.8em;
 }
 
-/* 질문을 건넨 책 패널 */
+/* 질문을 건넨 책 패널 — 카드 위에 얹힌 밝은 종이 느낌 */
 .rc3-bookpanel {
+  background: rgba(255, 253, 248, 0.72);
+  border: 1px solid;
   border-radius: 0.9em;
-  padding: 0.95em 1.05em;
+  padding: 1em 1.1em;
   display: flex;
-  gap: 0.95em;
+  gap: 1em;
   align-items: center;
+  box-shadow: 0 2px 8px rgba(120, 90, 60, 0.06);
 }
 
 .rc3-cover {
-  width: 3.6em;
-  height: 5em;
+  width: 4.2em;
+  height: 5.8em;
   object-fit: cover;
   border-radius: 0.35em;
   flex-shrink: 0;
+  box-shadow: 0 3px 8px rgba(120, 90, 60, 0.22);
 }
 
 .rc3-cover.ph {
@@ -451,9 +455,9 @@ textarea {
 }
 
 .rc3-chips span {
-  font-size: 0.62em;
+  font-size: 0.64em;
   font-weight: 700;
-  padding: 0.3em 0.9em;
+  padding: 0.35em 1em;
   border-radius: 999px;
 }
 
@@ -470,15 +474,27 @@ textarea {
 }
 
 .rc3-pages {
-  font-size: 0.66em;
-  margin-top: 0.5em;
+  font-size: 0.68em;
+  margin-top: 0.55em;
   font-variant-numeric: tabular-nums;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8em;
+}
+
+.rc3-pages b {
+  font-size: 1.15em;
 }
 
 .rc3-pct {
   flex-shrink: 0;
   text-align: center;
-  padding-left: 0.4em;
+  border-left: 1px solid;
+  padding: 0.3em 0.35em 0.3em 1.05em;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .rc3-pct .p {

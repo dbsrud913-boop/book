@@ -47,9 +47,11 @@ const RecordCard = forwardRef<HTMLDivElement, Props>(function RecordCard(
   })
 
   const panelBg = `color-mix(in srgb, ${t.ink} 7%, transparent)`
-  const chipBg = `color-mix(in srgb, ${t.accent} 14%, transparent)`
+  const chipBg = `color-mix(in srgb, ${t.accent} 12%, transparent)`
   const trackBg = `color-mix(in srgb, ${t.ink} 15%, transparent)`
   const ruleLine = `color-mix(in srgb, ${t.ink} 22%, transparent)`
+  // 카테고리에서 앞의 이모지를 떼고 텍스트만 (예: '📜 인문과학' → '인문과학')
+  const categoryText = book.category.replace(/^[^가-힣A-Za-z0-9]+\s*/, '').trim()
 
   return (
     <div
@@ -129,7 +131,7 @@ const RecordCard = forwardRef<HTMLDivElement, Props>(function RecordCard(
 
         <div className="rc2-spacer" />
 
-        <div className="rc3-bookpanel" style={{ background: panelBg }}>
+        <div className="rc3-bookpanel" style={{ borderColor: t.line }}>
           {book.coverDataUrl ? (
             <img className="rc3-cover" src={book.coverDataUrl} alt="" />
           ) : (
@@ -138,7 +140,7 @@ const RecordCard = forwardRef<HTMLDivElement, Props>(function RecordCard(
             </div>
           )}
           <div className="rc3-bookinfo">
-            <div className="rc3-cap" style={{ color: t.accent, marginBottom: '0.3em' }}>
+            <div className="rc3-cap" style={{ color: t.accent, marginBottom: '0.35em' }}>
               질문을 건넨 책
             </div>
             <div className="bt">{book.title}</div>
@@ -146,9 +148,13 @@ const RecordCard = forwardRef<HTMLDivElement, Props>(function RecordCard(
               {book.author}
               {book.publisher ? ` · ${book.publisher}` : ''}
             </div>
-            {book.category && (
+            {categoryText && (
               <div className="rc3-chips">
-                <span style={{ background: chipBg, color: t.accent }}>{book.category}</span>
+                {categoryText.split(/[\s·/]+/).map((c) => (
+                  <span key={c} style={{ background: chipBg, color: t.accent }}>
+                    {c}
+                  </span>
+                ))}
               </div>
             )}
             {book.totalPages > 0 && (
@@ -157,14 +163,16 @@ const RecordCard = forwardRef<HTMLDivElement, Props>(function RecordCard(
                   <div style={{ width: `${pctNum}%`, background: t.accent }} />
                 </div>
                 <div className="rc3-pages" style={{ color: t.sub }}>
-                  <b style={{ color: t.ink }}>{entry.page}</b> / {book.totalPages} page
-                  {entry.minutes ? ` · ⏱ 오늘 ${entry.minutes}분 읽음` : ''}
+                  <span>
+                    <b style={{ color: t.accent }}>{entry.page}</b> / {book.totalPages} page
+                  </span>
+                  {entry.minutes ? <span>⏱ 오늘 {entry.minutes}분 읽음</span> : null}
                 </div>
               </>
             )}
           </div>
           {book.totalPages > 0 && (
-            <div className="rc3-pct">
+            <div className="rc3-pct" style={{ borderColor: t.line }}>
               <div className="p" style={{ color: t.accent }}>
                 {Math.round(pctNum)}
                 <small>%</small>
