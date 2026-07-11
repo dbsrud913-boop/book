@@ -31,6 +31,7 @@ export interface Settings {
   appLabel: string // 카드 왼쪽 상단 라벨 (예: 평단지기 독서법)
   signature: string // 카드 하단 서명 (예: @닉네임)
   defaultThemeId: string
+  kakaoApiKey?: string // 카카오 REST API 키 — 책 검색용 (선택)
 }
 
 export interface JournalData {

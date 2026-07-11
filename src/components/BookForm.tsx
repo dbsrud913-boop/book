@@ -43,8 +43,32 @@ async function searchOpenLibrary(query: string): Promise<SearchResult[]> {
   }))
 }
 
-/** 구글 우선, 실패하면 Open Library로 자동 전환 */
-async function searchBooks(query: string): Promise<SearchResult[]> {
+/** 카카오 책 검색 — 한국 책 데이터가 가장 좋다 (REST API 키 필요, 무료) */
+async function searchKakaoBooks(query: string, apiKey: string): Promise<SearchResult[]> {
+  const url = `https://dapi.kakao.com/v3/search/book?query=${encodeURIComponent(query)}&size=8`
+  const res = await fetch(url, { headers: { Authorization: `KakaoAK ${apiKey}` } })
+  if (!res.ok) throw new Error(`kakao ${res.status}`)
+  const json = await res.json()
+  return ((json.documents as any[]) ?? []).map((d, i) => ({
+    id: d.isbn || `kakao-${i}`,
+    title: d.title ?? '',
+    authors: ((d.authors as string[]) ?? []).join(', '),
+    publisher: d.publisher ?? '',
+    pages: 0, // 카카오는 페이지 수를 제공하지 않음
+    thumb: (d.thumbnail as string | undefined) ?? '',
+  }))
+}
+
+/** 카카오(키가 있으면) → 구글 → Open Library 순서로 시도 */
+async function searchBooks(query: string, kakaoKey?: string): Promise<SearchResult[]> {
+  if (kakaoKey?.trim()) {
+    try {
+      const k = await searchKakaoBooks(query, kakaoKey.trim())
+      if (k.length > 0) return k
+    } catch {
+      // 아래 예비 검색으로
+    }
+  }
   try {
     const g = await searchGoogleBooks(query)
     if (g.length > 0) return g
@@ -68,12 +92,13 @@ const CATEGORIES = [
 
 interface Props {
   initial?: Book
+  kakaoApiKey?: string
   onSave: (book: Book) => void
   onClose: () => void
   onDelete?: () => void
 }
 
-export default function BookForm({ initial, onSave, onClose, onDelete }: Props) {
+export default function BookForm({ initial, kakaoApiKey, onSave, onClose, onDelete }: Props) {
   const [title, setTitle] = useState(initial?.title ?? '')
   const [author, setAuthor] = useState(initial?.author ?? '')
   const [publisher, setPublisher] = useState(initial?.publisher ?? '')
@@ -92,11 +117,15 @@ export default function BookForm({ initial, onSave, onClose, onDelete }: Props) 
     setSearchMsg('')
     setResults(null)
     try {
-      const items = await searchBooks(title.trim())
+      const items = await searchBooks(title.trim(), kakaoApiKey)
       setResults(items)
       if (items.length === 0) setSearchMsg('검색 결과가 없어요. 아래에 직접 입력해 주세요.')
     } catch {
-      setSearchMsg('검색에 실패했어요. 인터넷 연결을 확인하거나 직접 입력해 주세요.')
+      setSearchMsg(
+        kakaoApiKey?.trim()
+          ? '검색에 실패했어요. 인터넷 연결을 확인하거나 직접 입력해 주세요.'
+          : '검색에 실패했어요. 설정 탭에서 카카오 API 키를 등록하면 훨씬 잘 돼요. (무료·5분)',
+      )
     } finally {
       setSearching(false)
     }

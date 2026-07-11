@@ -181,6 +181,7 @@ export default function App() {
       {showBookForm && (
         <BookForm
           initial={editBook ?? undefined}
+          kakaoApiKey={data.settings.kakaoApiKey}
           onSave={upsertBook}
           onClose={() => {
             setShowBookForm(false)
@@ -454,6 +455,23 @@ function SettingsTab({
               />
             ))}
           </div>
+        </div>
+      </div>
+
+      <div className="section-title">책 검색</div>
+      <div className="settings-block">
+        <div className="field" style={{ marginBottom: 0 }}>
+          <label>카카오 REST API 키 (선택 — 등록하면 한국 책 검색이 잘 돼요)</label>
+          <input
+            value={data.settings.kakaoApiKey ?? ''}
+            onChange={(e) => onUpdate({ kakaoApiKey: e.target.value.trim() })}
+            placeholder="카카오 개발자 사이트에서 발급한 REST API 키"
+          />
+          <p style={{ fontSize: 12.5, color: 'var(--app-sub)', lineHeight: 1.7, marginTop: 8 }}>
+            developers.kakao.com → 로그인 → [내 애플리케이션] → [애플리케이션 추가] →
+            앱 이름 아무거나 입력해 생성 → <b>REST API 키</b>를 복사해서 여기에 붙여넣으세요.
+            무료(하루 3만 회)이고, 키는 이 기기에만 저장돼요.
+          </p>
         </div>
       </div>
 
