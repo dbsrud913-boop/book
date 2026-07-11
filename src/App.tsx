@@ -26,6 +26,7 @@ export default function App() {
   const [editBook, setEditBook] = useState<Book | null>(null)
   const [viewEntryId, setViewEntryId] = useState<string | null>(null)
   const [detailBookId, setDetailBookId] = useState<string | null>(null)
+  const [presetBookId, setPresetBookId] = useState<string | null>(null)
 
   useEffect(() => {
     saveData(data)
@@ -53,6 +54,7 @@ export default function App() {
     })
     setShowEntryForm(false)
     setEditEntry(null)
+    setPresetBookId(null)
     setViewEntryId(entry.id) // 저장 후 바로 카드 보여주기
   }
 
@@ -126,6 +128,10 @@ export default function App() {
                 setEditBook(bookById(data.books, detailBookId)!)
                 setShowBookForm(true)
               }}
+              onWrite={() => {
+                setPresetBookId(detailBookId)
+                setShowEntryForm(true)
+              }}
               onOpenCard={(id) => setViewEntryId(id)}
             />
           ) : (
@@ -160,11 +166,13 @@ export default function App() {
           books={data.books}
           settings={data.settings}
           initial={editEntry ?? undefined}
+          defaultBookId={presetBookId ?? sorted[0]?.bookId}
           lastPageByBook={lastPageByBook}
           onSave={upsertEntry}
           onClose={() => {
             setShowEntryForm(false)
             setEditEntry(null)
+            setPresetBookId(null)
           }}
           onAddBook={() => setShowBookForm(true)}
         />

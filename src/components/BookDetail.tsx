@@ -9,6 +9,7 @@ interface Props {
   entries: Entry[] // 전체 기록
   onBack: () => void
   onEdit: () => void
+  onWrite: () => void
   onOpenCard: (entryId: string) => void
 }
 
@@ -24,7 +25,7 @@ const STATUS_LABEL: Record<Book['status'], string> = {
 }
 
 /** 책 상세 — 함께한 기간·기록 통계와 그 책의 모든 기록 */
-export default function BookDetail({ book, entries, onBack, onEdit, onOpenCard }: Props) {
+export default function BookDetail({ book, entries, onBack, onEdit, onWrite, onOpenCard }: Props) {
   const bookEntries = useMemo(
     () => sortEntriesDesc(entries.filter((e) => e.bookId === book.id)),
     [entries, book.id],
@@ -65,9 +66,14 @@ export default function BookDetail({ book, entries, onBack, onEdit, onOpenCard }
             <span className="badge">{STATUS_LABEL[book.status]}</span>
             {book.category && <span className="badge">{book.category}</span>}
           </div>
-          <button className="btn ghost small" style={{ marginTop: 10 }} onClick={onEdit}>
-            정보 수정
-          </button>
+          <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+            <button className="btn small" onClick={onWrite}>
+              ✏️ 이 책 기록 쓰기
+            </button>
+            <button className="btn ghost small" onClick={onEdit}>
+              정보 수정
+            </button>
+          </div>
         </div>
       </div>
 

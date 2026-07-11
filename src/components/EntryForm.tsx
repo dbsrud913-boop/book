@@ -9,6 +9,7 @@ interface Props {
   books: Book[]
   settings: Settings
   initial?: Entry // 수정 모드
+  defaultBookId?: string // 미리 선택할 책 (마지막 기록 책 or 상세 페이지에서 진입)
   lastPageByBook: Record<string, number>
   onSave: (entry: Entry) => void
   onClose: () => void
@@ -19,13 +20,22 @@ export default function EntryForm({
   books,
   settings,
   initial,
+  defaultBookId,
   lastPageByBook,
   onSave,
   onClose,
   onAddBook,
 }: Props) {
-  const readingBooks = books.filter((b) => b.status !== 'done' || b.id === initial?.bookId)
-  const [bookId, setBookId] = useState(initial?.bookId ?? readingBooks[0]?.id ?? '')
+  const readingBooks = books.filter(
+    (b) => b.status !== 'done' || b.id === initial?.bookId || b.id === defaultBookId,
+  )
+  const preset =
+    initial?.bookId ??
+    (defaultBookId && readingBooks.some((b) => b.id === defaultBookId)
+      ? defaultBookId
+      : readingBooks[0]?.id) ??
+    ''
+  const [bookId, setBookId] = useState(preset)
   const [date, setDate] = useState(initial?.date ?? todayStr())
   const [page, setPage] = useState(initial ? String(initial.page || '') : '')
   const [minutes, setMinutes] = useState(initial?.minutes ? String(initial.minutes) : '')
