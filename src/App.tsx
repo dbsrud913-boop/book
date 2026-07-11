@@ -100,7 +100,9 @@ export default function App() {
   return (
     <>
       <header className="app-header">
-        <div className="app-title">📚 하루 한 장</div>
+        <div className="app-title">
+          📚 책에 묻다 <span className="app-subtitle">오늘의 독서</span>
+        </div>
         <div className="app-streak">
           연속 <b>{streak}일</b> · 누적 <b>{totalDays}일</b>
         </div>
@@ -431,7 +433,7 @@ function SettingsTab({
           <input
             value={data.settings.appLabel}
             onChange={(e) => onUpdate({ appLabel: e.target.value })}
-            placeholder="예: 질문하는 독서"
+            placeholder="예: 책에 묻다"
           />
         </div>
         <div className="field">
@@ -499,7 +501,7 @@ function SettingsTab({
       </div>
 
       <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--app-sub)', marginTop: 24 }}>
-        하루 한 장 · 매일 독서 기록 v0.1
+        책에 묻다 · 오늘의 독서 v0.1
       </p>
     </>
   )

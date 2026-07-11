@@ -6,10 +6,13 @@ import { DEFAULT_THEME_ID } from './themes'
 const KEY = 'haru-journal-v1'
 
 export const DEFAULT_SETTINGS: Settings = {
-  appLabel: '질문하는 독서',
+  appLabel: '책에 묻다',
   signature: '',
   defaultThemeId: DEFAULT_THEME_ID,
 }
+
+// 이전 기본 라벨을 쓰고 있던 기기는 새 이름으로 자동 이전
+const OLD_DEFAULT_LABELS = ['매일 독서 기록', '질문하는 독서']
 
 function emptyData(): JournalData {
   return { version: 1, books: [], entries: [], settings: { ...DEFAULT_SETTINGS } }
@@ -21,11 +24,13 @@ export function loadData(): JournalData {
     if (!raw) return emptyData()
     const parsed = JSON.parse(raw) as JournalData
     if (!parsed || parsed.version !== 1) return emptyData()
+    const settings = { ...DEFAULT_SETTINGS, ...parsed.settings }
+    if (OLD_DEFAULT_LABELS.includes(settings.appLabel)) settings.appLabel = DEFAULT_SETTINGS.appLabel
     return {
       version: 1,
       books: parsed.books ?? [],
       entries: parsed.entries ?? [],
-      settings: { ...DEFAULT_SETTINGS, ...parsed.settings },
+      settings,
     }
   } catch {
     return emptyData()

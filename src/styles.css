@@ -77,6 +77,13 @@ textarea {
   letter-spacing: -0.5px;
 }
 
+.app-subtitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--app-sub);
+  margin-left: 2px;
+}
+
 .app-streak {
   font-size: 13px;
   color: var(--app-sub);
