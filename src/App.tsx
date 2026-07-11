@@ -12,6 +12,8 @@ import {
 import EntryForm from './components/EntryForm'
 import BookForm from './components/BookForm'
 import CardModal from './components/CardModal'
+import EntryListItem from './components/EntryListItem'
+import BookDetail, { bookPlaceholderTheme } from './components/BookDetail'
 
 type Tab = 'today' | 'timeline' | 'shelf' | 'settings'
 
@@ -23,6 +25,7 @@ export default function App() {
   const [showBookForm, setShowBookForm] = useState(false)
   const [editBook, setEditBook] = useState<Book | null>(null)
   const [viewEntryId, setViewEntryId] = useState<string | null>(null)
+  const [detailBookId, setDetailBookId] = useState<string | null>(null)
 
   useEffect(() => {
     saveData(data)
@@ -78,6 +81,7 @@ export default function App() {
     }))
     setEditBook(null)
     setShowBookForm(false)
+    setDetailBookId(null)
   }
 
   function updateSettings(patch: Partial<Settings>) {
@@ -112,17 +116,25 @@ export default function App() {
         {tab === 'timeline' && (
           <TimelineTab data={data} sorted={sorted} onOpenCard={(id) => setViewEntryId(id)} />
         )}
-        {tab === 'shelf' && (
-          <ShelfTab
-            data={data}
-            lastPageByBook={lastPageByBook}
-            onAdd={() => setShowBookForm(true)}
-            onEdit={(b) => {
-              setEditBook(b)
-              setShowBookForm(true)
-            }}
-          />
-        )}
+        {tab === 'shelf' &&
+          (detailBookId && bookById(data.books, detailBookId) ? (
+            <BookDetail
+              book={bookById(data.books, detailBookId)!}
+              entries={data.entries}
+              onBack={() => setDetailBookId(null)}
+              onEdit={() => {
+                setEditBook(bookById(data.books, detailBookId)!)
+                setShowBookForm(true)
+              }}
+              onOpenCard={(id) => setViewEntryId(id)}
+            />
+          ) : (
+            <ShelfTab
+              data={data}
+              onAdd={() => setShowBookForm(true)}
+              onOpen={(b) => setDetailBookId(b.id)}
+            />
+          ))}
         {tab === 'settings' && (
           <SettingsTab data={data} onUpdate={updateSettings} onImport={(d) => setData(d)} />
         )}
@@ -219,7 +231,7 @@ function TodayTab({
         <>
           <div className="section-title">최근 기록</div>
           {recent.map((e) => (
-            <EntryListItem key={e.id} entry={e} data={data} onClick={() => onOpenCard(e.id)} />
+            <EntryListItem key={e.id} entry={e} book={bookById(data.books, e.bookId)} onClick={() => onOpenCard(e.id)} />
           ))}
         </>
       )}
@@ -278,7 +290,7 @@ function TimelineTab({
           <div key={g.date}>
             <div className="tl-date">{g.date}</div>
             {g.items.map((e) => (
-              <EntryListItem key={e.id} entry={e} data={data} onClick={() => onOpenCard(e.id)} />
+              <EntryListItem key={e.id} entry={e} book={bookById(data.books, e.bookId)} onClick={() => onOpenCard(e.id)} />
             ))}
           </div>
         ))
@@ -287,52 +299,30 @@ function TimelineTab({
   )
 }
 
-function EntryListItem({
-  entry,
-  data,
-  onClick,
-}: {
-  entry: Entry
-  data: JournalData
-  onClick: () => void
-}) {
-  const book = bookById(data.books, entry.bookId)
-  const t = getTheme(entry.themeId)
-  if (!book) return null
-  const pct = progressPercent(entry.page, book.totalPages)
-  return (
-    <div className="tl-item" onClick={onClick} role="button">
-      <div className="tl-head">
-        <div className="tl-dot" style={{ background: t.bg, border: `1px solid ${t.line}` }} />
-        <div className="tl-book">{book.title}</div>
-        <div className="tl-meta">
-          {entry.date}
-          {pct ? ` · ${pct}` : ''}
-        </div>
-      </div>
-      {entry.read && <div className="tl-quote">“{entry.read}”</div>}
-      {entry.note && <div className="tl-note">{entry.note}</div>}
-    </div>
-  )
+/* ---------- 책장 탭 (선반 위 책 표지) ---------- */
+const SHELF_GROUPS: { status: Book['status']; label: string }[] = [
+  { status: 'reading', label: '읽는 중' },
+  { status: 'done', label: '완독' },
+  { status: 'paused', label: '잠시 멈춤' },
+]
+
+const BOOKS_PER_SHELF = 4
+
+function chunk<T>(arr: T[], size: number): T[][] {
+  const out: T[][] = []
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size))
+  return out
 }
 
-/* ---------- 책장 탭 ---------- */
 function ShelfTab({
   data,
-  lastPageByBook,
   onAdd,
-  onEdit,
+  onOpen,
 }: {
   data: JournalData
-  lastPageByBook: Record<string, number>
   onAdd: () => void
-  onEdit: (b: Book) => void
+  onOpen: (b: Book) => void
 }) {
-  const statusLabel: Record<Book['status'], string> = {
-    reading: '읽는 중',
-    done: '완독 🎉',
-    paused: '잠시 멈춤',
-  }
   return (
     <>
       <button className="btn secondary" style={{ marginTop: 10 }} onClick={onAdd}>
@@ -343,40 +333,46 @@ function ShelfTab({
           <span className="big">📚</span>읽고 있는 책을 추가해 보세요.
         </div>
       ) : (
-        <div style={{ marginTop: 16 }}>
-          {data.books.map((b) => {
-            const last = lastPageByBook[b.id] ?? 0
-            const pctNum = b.totalPages ? Math.min(100, (last / b.totalPages) * 100) : 0
-            const count = data.entries.filter((e) => e.bookId === b.id).length
-            return (
-              <div className="shelf-item" key={b.id} onClick={() => onEdit(b)} role="button">
-                {b.coverDataUrl ? (
-                  <img className="shelf-cover" src={b.coverDataUrl} alt="" />
-                ) : (
-                  <div className="shelf-cover-ph">📕</div>
-                )}
-                <div className="shelf-info">
-                  <div className="t">{b.title}</div>
-                  <div className="a">
-                    {b.author}
-                    {b.publisher ? ` · ${b.publisher}` : ''}
-                  </div>
-                  <div className="p">
-                    {statusLabel[b.status]} · 기록 {count}회
-                    {b.totalPages ? ` · ${last}/${b.totalPages}p` : ''}
-                  </div>
-                  {b.totalPages > 0 && (
-                    <div className="progress-bar">
-                      <div style={{ width: `${pctNum}%` }} />
-                    </div>
-                  )}
-                </div>
+        SHELF_GROUPS.map((g) => {
+          const books = data.books.filter((b) => b.status === g.status)
+          if (books.length === 0) return null
+          return (
+            <section key={g.status}>
+              <div className="shelf-head">
+                <span>{g.label}</span>
+                <span className="cnt">{books.length}권</span>
               </div>
-            )
-          })}
-        </div>
+              {chunk(books, BOOKS_PER_SHELF).map((row, i) => (
+                <div key={i}>
+                  <div className="shelf-row">
+                    {row.map((b) => (
+                      <ShelfBook key={b.id} book={b} onClick={() => onOpen(b)} />
+                    ))}
+                  </div>
+                  <div className="shelf-plank" />
+                </div>
+              ))}
+            </section>
+          )
+        })
       )}
     </>
+  )
+}
+
+function ShelfBook({ book, onClick }: { book: Book; onClick: () => void }) {
+  const ph = bookPlaceholderTheme(book)
+  return (
+    <button className="shelf-book" onClick={onClick} title={book.title}>
+      {book.coverDataUrl ? (
+        <img src={book.coverDataUrl} alt={book.title} />
+      ) : (
+        <div className="ph" style={{ background: ph.bg, color: ph.ink }}>
+          <span className="pt">{book.title}</span>
+          <span className="pa">{book.author}</span>
+        </div>
+      )}
+    </button>
   )
 }
 
