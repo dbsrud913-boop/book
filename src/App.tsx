@@ -257,8 +257,8 @@ function IconBooks() {
 function IconGear() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3.4" />
-      <path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1" />
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
     </svg>
   )
 }
@@ -652,58 +652,116 @@ function SettingsTab({
     reader.readAsText(file)
   }
 
+  const [open, setOpen] = useState<string | null>(null)
+  const toggle = (key: string) => setOpen((o) => (o === key ? null : key))
+  const sig = data.settings.signature
+
   return (
     <>
-      <div className="section-title">카드 꾸미기</div>
-      <div className="settings-block">
-        <div className="field">
-          <label>카드 상단 라벨</label>
-          <input
-            value={data.settings.appLabel}
-            onChange={(e) => onUpdate({ appLabel: e.target.value })}
-            placeholder="예: 책에 묻다"
-          />
+      {/* 내 정보 */}
+      <div className="set-group-title">👤 내 정보</div>
+      <div className="set-card">
+        <div className="set-profile">
+          <div className="avatar">📖</div>
+          <div className="pinfo">
+            <div className="nick">{sig ? `@${sig.replace(/^@/, '')}` : '@닉네임'}</div>
+            <div className="bio">책을 통해 나를 발견하는 중</div>
+          </div>
+          <button className="btn ghost small" onClick={() => toggle('profile')}>
+            프로필 수정 ›
+          </button>
         </div>
-        <div className="field" style={{ marginBottom: 0 }}>
-          <label>카드 서명 (닉네임)</label>
-          <input
-            value={data.settings.signature}
-            onChange={(e) => onUpdate({ signature: e.target.value })}
-            placeholder="예: @닉네임"
-          />
-        </div>
+        {open === 'profile' && (
+          <div className="set-expand">
+            <div className="field" style={{ marginBottom: 0 }}>
+              <label>닉네임 — 카드 하단 서명으로도 쓰여요</label>
+              <input
+                value={data.settings.signature}
+                onChange={(e) => onUpdate({ signature: e.target.value })}
+                placeholder="예: 와이작가"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
-      <div className="section-title">책 검색</div>
-      <div className="settings-block">
-        <div className="field" style={{ marginBottom: 0 }}>
-          <label>카카오 REST API 키 (선택 — 등록하면 한국 책 검색이 잘 돼요)</label>
-          <input
-            value={data.settings.kakaoApiKey ?? ''}
-            onChange={(e) => onUpdate({ kakaoApiKey: e.target.value.trim() })}
-            placeholder="카카오 개발자 사이트에서 발급한 REST API 키"
-          />
-          <p style={{ fontSize: 12.5, color: 'var(--app-sub)', lineHeight: 1.7, marginTop: 8 }}>
-            developers.kakao.com → 로그인 → [내 애플리케이션] → [애플리케이션 추가] →
-            앱 이름 아무거나 입력해 생성 → <b>REST API 키</b>를 복사해서 여기에 붙여넣으세요.
-            무료(하루 3만 회)이고, 키는 이 기기에만 저장돼요.
-          </p>
-        </div>
+      {/* 앱 설정 */}
+      <div className="set-group-title">🎨 앱 설정</div>
+      <div className="set-card">
+        <button className="set-row" onClick={() => toggle('card')}>
+          <div className="mini-card">
+            <span className="mq">❝</span>
+            <span className="ml">{data.settings.appLabel}</span>
+            <span className="ms">{sig ? `@${sig.replace(/^@/, '')}` : '@닉네임'}</span>
+          </div>
+          <div className="set-row-body">
+            <div className="t">카드 꾸미기</div>
+            <div className="d">카드 상단 라벨을 바꿔 보세요.</div>
+          </div>
+          <span className="de-chev">›</span>
+        </button>
+        {open === 'card' && (
+          <div className="set-expand">
+            <div className="field" style={{ marginBottom: 0 }}>
+              <label>카드 상단 라벨</label>
+              <input
+                value={data.settings.appLabel}
+                onChange={(e) => onUpdate({ appLabel: e.target.value })}
+                placeholder="예: 책에 묻다"
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="set-divider" />
+
+        <button className="set-row" onClick={() => toggle('search')}>
+          <div className="set-tile" style={{ background: '#EDF0E1' }}>
+            🔍
+          </div>
+          <div className="set-row-body">
+            <div className="t">책 검색 설정</div>
+            <div className="d">
+              {data.settings.kakaoApiKey ? '카카오 API 연결됨 ✔' : '카카오 API 연결을 관리해요.'}
+            </div>
+          </div>
+          <span className="de-chev">›</span>
+        </button>
+        {open === 'search' && (
+          <div className="set-expand">
+            <div className="field" style={{ marginBottom: 0 }}>
+              <label>카카오 REST API 키 (무료 — 등록하면 한국 책 검색이 잘 돼요)</label>
+              <input
+                value={data.settings.kakaoApiKey ?? ''}
+                onChange={(e) => onUpdate({ kakaoApiKey: e.target.value.trim() })}
+                placeholder="카카오 개발자 사이트에서 발급한 REST API 키"
+              />
+              <p className="set-help">
+                developers.kakao.com → 로그인 → [내 애플리케이션] → [애플리케이션 추가] → 앱 이름
+                아무거나 입력해 생성 → <b>REST API 키</b>를 복사해서 붙여넣으세요. 무료(하루 3만
+                회)이고, 키는 이 기기에만 저장돼요.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
-      <div className="section-title">데이터</div>
-      <div className="settings-block">
-        <p style={{ fontSize: 13, color: 'var(--app-sub)', lineHeight: 1.7, marginBottom: 12 }}>
-          기록은 이 기기(브라우저)에 저장돼요. 기기를 바꾸거나 브라우저 데이터를 지우기 전에 꼭
-          백업해 두세요.
-        </p>
-        <div className="row">
-          <button className="btn secondary" onClick={download}>
-            ⬇️ 백업 내보내기
-          </button>
-          <button className="btn ghost" onClick={() => fileRef.current?.click()}>
-            ⬆️ 백업 불러오기
-          </button>
+      {/* 데이터 관리 */}
+      <div className="set-group-title">☁️ 데이터 관리</div>
+      <div className="set-card">
+        <div className="set-backup">
+          <div className="set-backup-info">
+            <div className="t">데이터 백업 &amp; 복원</div>
+            <div className="d">
+              기록은 이 기기에만 저장돼요.
+              <br />
+              소중한 기록을 안전하게 백업해 두세요.
+            </div>
+          </div>
+          <div className="set-backup-btns">
+            <button onClick={download}>⬇ 백업 내보내기</button>
+            <button onClick={() => fileRef.current?.click()}>⬆ 백업 불러오기</button>
+          </div>
         </div>
         <input
           ref={fileRef}
@@ -714,9 +772,32 @@ function SettingsTab({
         />
       </div>
 
-      <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--app-sub)', marginTop: 24 }}>
-        책에 묻다 · 오늘의 독서 v0.1
-      </p>
+      {/* 기타 */}
+      <div className="set-group-title">ℹ️ 기타</div>
+      <div className="set-card">
+        <div className="set-row" style={{ cursor: 'default' }}>
+          <div className="set-tile" style={{ background: '#FBE9DC' }}>
+            🤍
+          </div>
+          <div className="set-row-body">
+            <div className="t">앱 소개</div>
+            <div className="d">책은 답을 주지 않습니다. 좋은 질문을 남길 뿐입니다.</div>
+          </div>
+        </div>
+        <div className="set-divider" />
+        <a className="set-row" href="mailto:dbsrud913@gmail.com?subject=[책에 묻다] 문의">
+          <div className="set-tile" style={{ background: '#EAF0DF' }}>
+            💬
+          </div>
+          <div className="set-row-body">
+            <div className="t">문의하기</div>
+            <div className="d">의견이나 제안이 있으신가요?</div>
+          </div>
+          <span className="de-chev">›</span>
+        </a>
+      </div>
+
+      <p className="set-version">책에 묻다 · 오늘의 독서 v1.0.0</p>
     </>
   )
 }
