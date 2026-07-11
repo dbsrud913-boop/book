@@ -319,183 +319,221 @@ textarea {
   position: relative;
 }
 
-.rc2-ghost {
-  position: absolute;
-  top: -0.18em;
-  right: -0.14em;
-  font-size: 7.6em;
-  font-weight: 900;
-  line-height: 1;
-  opacity: 0.11;
-  pointer-events: none;
+/* 카드 전체는 명조(세리프) 저널 스타일 */
+.record-card.rc2 {
+  font-family: 'Noto Serif KR', 'Apple SD Gothic Neo', serif;
 }
 
-.rc2-top {
+.rc3-top {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 1em;
 }
 
-.rc2-chip {
-  display: inline-block;
-  padding: 0.5em 1em;
-  border-radius: 999px;
-  font-size: 0.78em;
-  font-weight: 800;
-  letter-spacing: 0.02em;
+.rc3-brand {
+  font-size: 1.35em;
+  font-weight: 900;
+  letter-spacing: -0.01em;
 }
 
-.rc2-day {
+.rc3-tagline {
+  font-size: 0.72em;
+  margin-top: 0.45em;
+}
+
+.rc3-day {
   text-align: right;
   flex-shrink: 0;
 }
 
-.rc2-day .n {
-  font-size: 1.15em;
+.rc3-day .n {
+  font-size: 1.25em;
   font-weight: 900;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
 }
 
-.rc2-day .s {
-  font-size: 0.7em;
-  margin-top: 0.3em;
+.rc3-day .s {
+  font-size: 0.68em;
+  margin-top: 0.4em;
 }
 
-.rc2-cap {
+.rc3-hr {
+  border: none;
+  border-top: 1px solid;
+  margin: 1em 0 0;
+}
+
+.rc3-sec {
+  margin-top: 1.4em;
+}
+
+.rc3-cap {
+  font-size: 0.74em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin-bottom: 0.75em;
+}
+
+.rc3-qmark {
+  font-size: 1.5em;
+  vertical-align: -0.15em;
+  letter-spacing: 0;
+}
+
+.rc3-q {
+  font-size: 1.62em;
+  font-weight: 900;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+  white-space: pre-wrap;
+}
+
+.rc3-quotebox {
+  margin-top: 1.4em;
+  border-radius: 0.9em;
+  padding: 1.05em 1.15em 0.95em;
+}
+
+.rc3-quote {
+  font-size: 1em;
+  font-weight: 600;
+  line-height: 1.75;
+  word-break: keep-all;
+  white-space: pre-wrap;
+}
+
+.rc3-attr {
   font-size: 0.72em;
-  font-weight: 800;
-  letter-spacing: 0.22em;
-  margin-bottom: 0.7em;
+  margin-top: 0.65em;
 }
 
-.rc2-hero {
-  margin-top: 1.7em;
-  position: relative;
-}
-
-.rc2-q {
-  font-size: 1.55em;
-  font-weight: 900;
-  line-height: 1.48;
-  letter-spacing: -0.02em;
+/* 나의 답 — 손글씨체 + 노트 줄 */
+.rc3-answer {
+  font-family: 'Nanum Pen Script', 'Noto Serif KR', cursive;
+  font-size: 1.35em;
+  line-height: 1.9em;
   word-break: keep-all;
   white-space: pre-wrap;
+  padding-bottom: 0.1em;
 }
 
-.rc2-block {
-  margin-top: 1.5em;
-}
-
-.rc2-quote {
-  border-left: 3px solid;
-  padding-left: 1em;
-  font-size: 0.94em;
-  line-height: 1.75;
-  font-style: italic;
-  white-space: pre-wrap;
-  word-break: keep-all;
-}
-
-.rc2-think {
-  font-size: 0.94em;
-  line-height: 1.75;
-  white-space: pre-wrap;
-  word-break: keep-all;
-}
-
-.rc2-keep {
-  margin-top: 1.3em;
-  font-size: 0.82em;
+.rc3-keep {
+  margin-top: 1.2em;
+  font-size: 0.78em;
   line-height: 1.6;
-  font-style: italic;
   word-break: keep-all;
 }
 
 .rc2-spacer {
   flex: 1;
-  min-height: 1em;
+  min-height: 0.8em;
 }
 
-.rc2-meta {
-  font-size: 0.72em;
-  margin-bottom: 0.9em;
-}
-
-.rc2-panel {
-  border-radius: 1.1em;
+/* 질문을 건넨 책 패널 */
+.rc3-bookpanel {
+  border-radius: 0.9em;
   padding: 0.95em 1.05em;
   display: flex;
-  gap: 0.9em;
+  gap: 0.95em;
   align-items: center;
 }
 
-.rc2-cover {
-  width: 2.9em;
-  height: 4em;
+.rc3-cover {
+  width: 3.6em;
+  height: 5em;
   object-fit: cover;
-  border-radius: 0.4em;
+  border-radius: 0.35em;
   flex-shrink: 0;
 }
 
-.rc2-cover.ph {
+.rc3-cover.ph {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1em;
+  font-size: 1.1em;
 }
 
-.rc2-bookinfo {
+.rc3-bookinfo {
   flex: 1;
   min-width: 0;
 }
 
-.rc2-bookinfo .t {
-  font-size: 0.88em;
+.rc3-bookinfo .bt {
+  font-size: 0.95em;
   font-weight: 800;
   line-height: 1.4;
   word-break: keep-all;
 }
 
-.rc2-bookinfo .a {
-  font-size: 0.72em;
-  margin-top: 0.35em;
+.rc3-bookinfo .ba {
+  font-size: 0.7em;
+  margin-top: 0.3em;
 }
 
-.rc2-prog {
-  flex-shrink: 0;
-  width: 5.6em;
-  text-align: right;
+.rc3-chips {
+  display: flex;
+  gap: 0.4em;
+  margin-top: 0.45em;
 }
 
-.rc2-prog .p {
-  font-size: 0.95em;
-  font-weight: 900;
-  font-variant-numeric: tabular-nums;
+.rc3-chips span {
+  font-size: 0.62em;
+  font-weight: 700;
+  padding: 0.3em 0.9em;
+  border-radius: 999px;
 }
 
-.rc2-prog .bar {
-  height: 0.35em;
+.rc3-bar {
+  height: 0.32em;
   border-radius: 999px;
   overflow: hidden;
-  margin: 0.4em 0;
+  margin-top: 0.6em;
 }
 
-.rc2-prog .bar > div {
+.rc3-bar > div {
   height: 100%;
   border-radius: 999px;
 }
 
-.rc2-prog .pg {
-  font-size: 0.65em;
+.rc3-pages {
+  font-size: 0.66em;
+  margin-top: 0.5em;
   font-variant-numeric: tabular-nums;
 }
 
-.rc2-sign {
-  margin-top: 0.8em;
-  font-size: 0.78em;
+.rc3-pct {
+  flex-shrink: 0;
+  text-align: center;
+  padding-left: 0.4em;
+}
+
+.rc3-pct .p {
+  font-size: 1.9em;
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.rc3-pct .p small {
+  font-size: 0.55em;
   font-weight: 700;
-  text-align: right;
+}
+
+.rc3-pct .l {
+  font-size: 0.62em;
+  margin-top: 0.4em;
+}
+
+.rc3-foot {
+  text-align: center;
+  font-size: 0.7em;
+  margin-top: 1em;
+  letter-spacing: 0.06em;
+  white-space: pre;
+  font-variant-numeric: tabular-nums;
 }
 
 /* 비율 토글 */

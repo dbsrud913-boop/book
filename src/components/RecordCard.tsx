@@ -1,9 +1,11 @@
 import { forwardRef, useLayoutEffect, useRef, useState } from 'react'
 import type { Book, Entry, Settings } from '../types'
 import { getTheme } from '../themes'
-import { bookDayIndex, progressPercent, totalRecordedDays } from '../utils'
+import { bookDayIndex, totalRecordedDays } from '../utils'
 
 export type CardRatio = '45' | '11'
+
+export const CARD_TAGLINE = '책은 답보다 질문을 남긴다.'
 
 interface Props {
   entry: Entry
@@ -16,17 +18,16 @@ interface Props {
 
 /**
  * SNS 공유용 기록 카드 — 이 DOM이 그대로 PNG로 내보내진다.
- * 질문(❓)이 헤드라인이 되는 구성. 인스타그램 규격에 맞춘 고정 비율이라
- * 내용이 길면 글자 크기를 자동으로 줄여서(scale) 안에 맞춘다.
+ * 명조(세리프) 저널 스타일: 질문이 헤드라인, 나의 답은 손글씨체.
+ * 인스타그램 규격 고정 비율이라 내용이 길면 글자 크기를 자동 축소한다.
  */
 const RecordCard = forwardRef<HTMLDivElement, Props>(function RecordCard(
-  { entry, book, entries, settings, startDate, ratio = '45' },
+  { entry, book, entries, settings, startDate: _startDate, ratio = '45' },
   ref,
 ) {
   const t = getTheme(entry.themeId)
   const dayIdx = bookDayIndex(entries, book.id, entry.date)
   const totalDays = totalRecordedDays(entries)
-  const pct = progressPercent(entry.page, book.totalPages)
   const pctNum = book.totalPages ? Math.min(100, (entry.page / book.totalPages) * 100) : 0
 
   const innerRef = useRef<HTMLDivElement>(null)
@@ -45,9 +46,10 @@ const RecordCard = forwardRef<HTMLDivElement, Props>(function RecordCard(
     }
   })
 
-  const chipBg = `color-mix(in srgb, ${t.accent} 16%, transparent)`
-  const panelBg = `color-mix(in srgb, ${t.ink} 9%, transparent)`
-  const trackBg = `color-mix(in srgb, ${t.ink} 16%, transparent)`
+  const panelBg = `color-mix(in srgb, ${t.ink} 7%, transparent)`
+  const chipBg = `color-mix(in srgb, ${t.accent} 14%, transparent)`
+  const trackBg = `color-mix(in srgb, ${t.ink} 15%, transparent)`
+  const ruleLine = `color-mix(in srgb, ${t.ink} 22%, transparent)`
 
   return (
     <div
@@ -61,101 +63,124 @@ const RecordCard = forwardRef<HTMLDivElement, Props>(function RecordCard(
       }}
     >
       <div className="rc2-in" ref={innerRef}>
-        <div className="rc2-ghost" style={{ color: t.accent }}>
-          ?
-        </div>
-
-        <header className="rc2-top">
-          <span className="rc2-chip" style={{ background: chipBg, color: t.accent }}>
-            {settings.appLabel}
-            {book.category ? ` · ${book.category}` : ''}
-          </span>
-          <div className="rc2-day">
-            <div className="n">DAY {dayIdx}</div>
+        <header className="rc3-top">
+          <div className="rc3-brand-wrap">
+            <div className="rc3-brand" style={{ color: t.accent }}>
+              {settings.appLabel}
+            </div>
+            <div className="rc3-tagline" style={{ color: t.sub }}>
+              {CARD_TAGLINE}
+            </div>
+          </div>
+          <div className="rc3-day">
+            <div className="n" style={{ color: t.accent }}>
+              DAY {String(dayIdx).padStart(2, '0')}
+            </div>
             <div className="s" style={{ color: t.sub }}>
-              누적 {totalDays}일
+              누적 {totalDays}일째 기록 중
             </div>
           </div>
         </header>
 
+        <hr className="rc3-hr" style={{ borderColor: t.line }} />
+
         {entry.note && (
-          <div className="rc2-hero">
-            <div className="rc2-cap" style={{ color: t.accent }}>
-              오늘, 나에게 묻다
+          <section className="rc3-sec">
+            <div className="rc3-cap" style={{ color: t.accent }}>
+              ◉ 책이 건넨 질문
             </div>
-            <div className="rc2-q">{entry.note}</div>
-          </div>
+            <div className="rc3-q">{entry.note}</div>
+          </section>
         )}
 
         {entry.read && (
-          <div className="rc2-block">
-            <div className="rc2-cap" style={{ color: t.accent }}>
-              질문을 만든 문장
+          <div className="rc3-quotebox" style={{ background: panelBg }}>
+            <div className="rc3-cap" style={{ color: t.accent }}>
+              <span className="rc3-qmark">❝</span> 질문이 된 문장
             </div>
-            <div className="rc2-quote" style={{ borderColor: t.accent }}>
-              {entry.read}
+            <div className="rc3-quote">“{entry.read}”</div>
+            <div className="rc3-attr" style={{ color: t.sub }}>
+              — {book.title} 中
             </div>
           </div>
         )}
 
         {entry.doit && (
-          <div className="rc2-block">
-            <div className="rc2-cap" style={{ color: t.accent }}>
-              나의 생각
+          <section className="rc3-sec">
+            <div className="rc3-cap" style={{ color: t.accent }}>
+              ✎ 나의 답
             </div>
-            <div className="rc2-think">{entry.doit}</div>
-          </div>
+            <div
+              className="rc3-answer"
+              style={{
+                backgroundImage: `repeating-linear-gradient(to bottom, transparent 0, transparent calc(1.9em - 1px), ${ruleLine} calc(1.9em - 1px), ${ruleLine} 1.9em)`,
+              }}
+            >
+              {entry.doit}
+            </div>
+          </section>
         )}
 
         {entry.success && (
-          <div className="rc2-keep" style={{ color: t.sub }}>
-            계속 품는 질문 — {entry.success}
+          <div className="rc3-keep" style={{ color: t.sub }}>
+            🌱 남은 질문 — {entry.success}
           </div>
         )}
 
         <div className="rc2-spacer" />
 
-        <div className="rc2-meta" style={{ color: t.sub }}>
-          {startDate && startDate !== entry.date ? `${startDate} 시작 · ` : ''}
-          {entry.date}
-          {entry.minutes ? ` · ${entry.minutes}분 읽음` : ''}
-        </div>
-
-        <div className="rc2-panel" style={{ background: panelBg }}>
+        <div className="rc3-bookpanel" style={{ background: panelBg }}>
           {book.coverDataUrl ? (
-            <img className="rc2-cover" src={book.coverDataUrl} alt="" />
+            <img className="rc3-cover" src={book.coverDataUrl} alt="" />
           ) : (
-            <div className="rc2-cover ph" style={{ background: trackBg }}>
+            <div className="rc3-cover ph" style={{ background: trackBg }}>
               📕
             </div>
           )}
-          <div className="rc2-bookinfo">
-            <div className="t">{book.title}</div>
-            <div className="a" style={{ color: t.sub }}>
+          <div className="rc3-bookinfo">
+            <div className="rc3-cap" style={{ color: t.accent, marginBottom: '0.3em' }}>
+              질문을 건넨 책
+            </div>
+            <div className="bt">{book.title}</div>
+            <div className="ba" style={{ color: t.sub }}>
               {book.author}
               {book.publisher ? ` · ${book.publisher}` : ''}
             </div>
+            {book.category && (
+              <div className="rc3-chips">
+                <span style={{ background: chipBg, color: t.accent }}>{book.category}</span>
+              </div>
+            )}
+            {book.totalPages > 0 && (
+              <>
+                <div className="rc3-bar" style={{ background: trackBg }}>
+                  <div style={{ width: `${pctNum}%`, background: t.accent }} />
+                </div>
+                <div className="rc3-pages" style={{ color: t.sub }}>
+                  <b style={{ color: t.ink }}>{entry.page}</b> / {book.totalPages} page
+                  {entry.minutes ? ` · ⏱ 오늘 ${entry.minutes}분 읽음` : ''}
+                </div>
+              </>
+            )}
           </div>
           {book.totalPages > 0 && (
-            <div className="rc2-prog">
+            <div className="rc3-pct">
               <div className="p" style={{ color: t.accent }}>
-                {pct}
+                {Math.round(pctNum)}
+                <small>%</small>
               </div>
-              <div className="bar" style={{ background: trackBg }}>
-                <div style={{ width: `${pctNum}%`, background: t.accent }} />
-              </div>
-              <div className="pg" style={{ color: t.sub }}>
-                {entry.page}/{book.totalPages}p
+              <div className="l" style={{ color: t.sub }}>
+                진행률
               </div>
             </div>
           )}
         </div>
 
-        {settings.signature && (
-          <div className="rc2-sign" style={{ color: t.accent }}>
-            ✎ {settings.signature}
-          </div>
-        )}
+        <div className="rc3-foot" style={{ color: t.sub }}>
+          {entry.date.split('-').join(' · ')}
+          {entry.minutes ? `  |  ${entry.minutes}분 읽음` : ''}
+          {settings.signature ? `  |  ✎ ${settings.signature}` : ''}
+        </div>
       </div>
     </div>
   )
