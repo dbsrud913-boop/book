@@ -84,11 +84,14 @@ export default function CardModal({
           </div>
         </div>
 
-        <button className="btn" onClick={saveImage} disabled={saving}>
+        <button className="btn secondary" onClick={saveImage} disabled={saving}>
           {saving ? '저장 중…' : '🖼 이미지로 저장'}
         </button>
+        <button className="btn" style={{ marginTop: 10 }} onClick={onClose}>
+          ✔ 기록 완료
+        </button>
         <div className="row" style={{ marginTop: 10 }}>
-          <button className="btn secondary" onClick={onEdit}>
+          <button className="btn ghost" onClick={onEdit}>
             수정
           </button>
           <button
