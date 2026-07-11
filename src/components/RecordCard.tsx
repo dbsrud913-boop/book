@@ -1,6 +1,7 @@
 import { forwardRef } from 'react'
 import type { Book, Entry, Settings } from '../types'
 import { getTheme } from '../themes'
+import { SECTIONS } from '../labels'
 import { bookDayIndex, progressPercent, totalRecordedDays } from '../utils'
 
 interface Props {
@@ -48,38 +49,18 @@ const RecordCard = forwardRef<HTMLDivElement, Props>(function RecordCard(
         <hr className="rc-hr" style={{ borderColor: t.line }} />
 
         <div className="rc-body">
-          {entry.read && (
-            <div className="rc-sec">
-              <div className="rc-sec-title" style={{ color: t.accent }}>
-                📖 오늘 문장 (Read)
+          {SECTIONS.map((s) => {
+            const text = entry[s.key]
+            if (!text) return null
+            return (
+              <div className="rc-sec" key={s.key}>
+                <div className="rc-sec-title" style={{ color: t.accent }}>
+                  {s.emoji} {s.title}
+                </div>
+                <div className={`rc-sec-text${s.quoteStyle ? ' quote' : ''}`}>{text}</div>
               </div>
-              <div className="rc-sec-text quote">{entry.read}</div>
-            </div>
-          )}
-          {entry.note && (
-            <div className="rc-sec">
-              <div className="rc-sec-title" style={{ color: t.accent }}>
-                💬 오늘 생각 (Note)
-              </div>
-              <div className="rc-sec-text">{entry.note}</div>
-            </div>
-          )}
-          {entry.doit && (
-            <div className="rc-sec">
-              <div className="rc-sec-title" style={{ color: t.accent }}>
-                ✍️ 오늘 행동 (Do it)
-              </div>
-              <div className="rc-sec-text">{entry.doit}</div>
-            </div>
-          )}
-          {entry.success && (
-            <div className="rc-sec">
-              <div className="rc-sec-title" style={{ color: t.accent }}>
-                🏆 성공일기
-              </div>
-              <div className="rc-sec-text">{entry.success}</div>
-            </div>
-          )}
+            )
+          })}
         </div>
 
         <div className="rc-bottom" style={{ borderColor: t.line }}>

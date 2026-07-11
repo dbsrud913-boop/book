@@ -213,7 +213,7 @@ function TodayTab({
           <span className="big">🌱</span>
           아직 기록이 없어요.
           <br />
-          오늘 읽은 책의 한 문장부터 남겨볼까요?
+          오늘 읽은 책에서 나에게 던질 질문 하나를 건져볼까요?
         </div>
       ) : (
         <>
@@ -426,7 +426,7 @@ function SettingsTab({
           <input
             value={data.settings.appLabel}
             onChange={(e) => onUpdate({ appLabel: e.target.value })}
-            placeholder="예: 매일 독서 기록"
+            placeholder="예: 질문하는 독서"
           />
         </div>
         <div className="field">

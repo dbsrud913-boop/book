@@ -3,6 +3,7 @@ import type { Book, Entry, Settings } from '../types'
 import { uid } from '../storage'
 import { THEMES } from '../themes'
 import { todayStr } from '../utils'
+import { SECTIONS, type SectionLabel } from '../labels'
 
 interface Props {
   books: Book[]
@@ -28,14 +29,17 @@ export default function EntryForm({
   const [date, setDate] = useState(initial?.date ?? todayStr())
   const [page, setPage] = useState(initial ? String(initial.page || '') : '')
   const [minutes, setMinutes] = useState(initial?.minutes ? String(initial.minutes) : '')
-  const [read, setRead] = useState(initial?.read ?? '')
-  const [note, setNote] = useState(initial?.note ?? '')
-  const [doit, setDoit] = useState(initial?.doit ?? '')
-  const [success, setSuccess] = useState(initial?.success ?? '')
+  const [texts, setTexts] = useState<Record<SectionLabel['key'], string>>({
+    read: initial?.read ?? '',
+    note: initial?.note ?? '',
+    doit: initial?.doit ?? '',
+    success: initial?.success ?? '',
+  })
   const [themeId, setThemeId] = useState(initial?.themeId ?? settings.defaultThemeId)
 
   const book = books.find((b) => b.id === bookId)
-  const canSave = !!bookId && !!date && (read.trim() || note.trim() || doit.trim())
+  const canSave =
+    !!bookId && !!date && (texts.read.trim() || texts.note.trim() || texts.doit.trim())
 
   function save() {
     if (!canSave) return
@@ -45,10 +49,10 @@ export default function EntryForm({
       date,
       page: Number(page) || 0,
       minutes: Number(minutes) || undefined,
-      read: read.trim(),
-      note: note.trim(),
-      doit: doit.trim(),
-      success: success.trim() || undefined,
+      read: texts.read.trim(),
+      note: texts.note.trim(),
+      doit: texts.doit.trim(),
+      success: texts.success.trim() || undefined,
       themeId,
       createdAt: initial?.createdAt ?? new Date().toISOString(),
     })
@@ -116,40 +120,17 @@ export default function EntryForm({
           />
         </div>
 
-        <div className="field">
-          <label>📖 오늘 문장 (Read) — 마음에 남은 구절</label>
-          <textarea
-            value={read}
-            onChange={(e) => setRead(e.target.value)}
-            placeholder="책 속에서 마음에 남은 문장을 옮겨 적어요"
-          />
-        </div>
-        <div className="field">
-          <label>💬 오늘 생각 (Note) — 내 생각</label>
-          <textarea
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="그 문장을 읽고 든 생각을 적어요"
-          />
-        </div>
-        <div className="field">
-          <label>✍️ 오늘 행동 (Do it) — 삶에 적용할 한 가지</label>
-          <textarea
-            value={doit}
-            onChange={(e) => setDoit(e.target.value)}
-            placeholder="오늘 실천해 볼 행동 한 가지"
-            style={{ minHeight: 60 }}
-          />
-        </div>
-        <div className="field">
-          <label>🏆 성공일기 (선택) — 어제 행동, 실천했나요?</label>
-          <textarea
-            value={success}
-            onChange={(e) => setSuccess(e.target.value)}
-            placeholder="실천한 것, 잘한 것을 칭찬해 줘요"
-            style={{ minHeight: 60 }}
-          />
-        </div>
+        {SECTIONS.map((s) => (
+          <div className="field" key={s.key}>
+            <label>{s.formLabel}</label>
+            <textarea
+              value={texts[s.key]}
+              onChange={(e) => setTexts((t) => ({ ...t, [s.key]: e.target.value }))}
+              placeholder={s.placeholder}
+              style={s.optional ? { minHeight: 60 } : undefined}
+            />
+          </div>
+        ))}
 
         <div className="field">
           <label>카드 컬러</label>

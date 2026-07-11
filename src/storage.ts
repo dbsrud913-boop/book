@@ -6,7 +6,7 @@ import { DEFAULT_THEME_ID } from './themes'
 const KEY = 'haru-journal-v1'
 
 export const DEFAULT_SETTINGS: Settings = {
-  appLabel: '매일 독서 기록',
+  appLabel: '질문하는 독서',
   signature: '',
   defaultThemeId: DEFAULT_THEME_ID,
 }
