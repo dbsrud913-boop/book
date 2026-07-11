@@ -1040,7 +1040,7 @@ textarea {
   margin: -6px 8px 26px;
 }
 
-/* 읽는 중 — 대형 카드 */
+/* 읽는 중 — 대형 카드 (표지가 선반 위에 서 있는 느낌) */
 .feat {
   display: flex;
   gap: 16px;
@@ -1051,15 +1051,20 @@ textarea {
   padding: 18px 16px;
   position: relative;
   z-index: 1;
+  margin-top: 26px;
 }
 
 .feat-cover {
-  width: 92px;
-  height: 128px;
+  width: 96px;
+  height: 134px;
   object-fit: cover;
   border-radius: 4px 9px 9px 4px;
   flex-shrink: 0;
-  box-shadow: 0 10px 16px rgba(70, 50, 30, 0.28);
+  box-shadow: 0 10px 16px rgba(70, 50, 30, 0.3);
+  margin-top: -42px;
+  margin-bottom: -24px;
+  position: relative;
+  z-index: 2;
 }
 
 .feat-cover.ph {
