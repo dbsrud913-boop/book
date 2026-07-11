@@ -264,35 +264,6 @@ textarea {
   color: var(--app-accent);
 }
 
-/* ---------- 테마 선택 ---------- */
-.theme-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-}
-
-.theme-swatch {
-  aspect-ratio: 1;
-  border-radius: 12px;
-  border: 2px solid transparent;
-  position: relative;
-}
-
-.theme-swatch.active {
-  border-color: var(--app-ink);
-}
-
-.theme-swatch.active::after {
-  content: '✓';
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 14px;
-}
-
 /* ---------- 기록 카드 (내보내기 대상) ----------
    인스타그램 규격 고정 비율(4:5 / 1:1).
    내부 크기는 전부 em — 카드 root font-size(scale)로 자동 축소된다. */
@@ -653,7 +624,8 @@ textarea {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  background: var(--app-accent);
+  opacity: 0.8;
 }
 
 /* ---------- 타임라인 ---------- */
@@ -680,10 +652,12 @@ textarea {
 }
 
 .tl-dot {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 4px;
   flex-shrink: 0;
+  background: var(--app-accent);
+  opacity: 0.75;
 }
 
 .tl-book {

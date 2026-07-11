@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Book, Entry, JournalData, Settings } from './types'
 import { loadData, saveData, exportJson, importJson } from './storage'
-import { getTheme, THEMES } from './themes'
 import {
   bookById,
   currentStreak,
@@ -89,13 +88,6 @@ export default function App() {
 
   function updateSettings(patch: Partial<Settings>) {
     setData((d) => ({ ...d, settings: { ...d.settings, ...patch } }))
-  }
-
-  function setEntryTheme(id: string, themeId: string) {
-    setData((d) => ({
-      ...d,
-      entries: d.entries.map((e) => (e.id === id ? { ...e, themeId } : e)),
-    }))
   }
 
   return (
@@ -200,7 +192,6 @@ export default function App() {
           book={bookById(data.books, viewEntry.bookId)!}
           entries={data.entries}
           settings={data.settings}
-          onChangeTheme={(tid) => setEntryTheme(viewEntry.id, tid)}
           onEdit={() => {
             setEditEntry(viewEntry)
             setViewEntryId(null)
@@ -453,27 +444,13 @@ function SettingsTab({
             placeholder="예: 책에 묻다"
           />
         </div>
-        <div className="field">
+        <div className="field" style={{ marginBottom: 0 }}>
           <label>카드 서명 (닉네임)</label>
           <input
             value={data.settings.signature}
             onChange={(e) => onUpdate({ signature: e.target.value })}
             placeholder="예: @닉네임"
           />
-        </div>
-        <div className="field" style={{ marginBottom: 0 }}>
-          <label>기본 카드 컬러</label>
-          <div className="theme-grid">
-            {THEMES.map((t) => (
-              <button
-                key={t.id}
-                className={`theme-swatch ${t.id === data.settings.defaultThemeId ? 'active' : ''}`}
-                style={{ background: t.bg, color: t.ink }}
-                title={t.name}
-                onClick={() => onUpdate({ defaultThemeId: t.id })}
-              />
-            ))}
-          </div>
         </div>
       </div>
 

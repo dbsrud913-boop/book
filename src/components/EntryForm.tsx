@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Book, Entry, Settings } from '../types'
 import { uid } from '../storage'
-import { THEMES } from '../themes'
+import { DEFAULT_THEME_ID } from '../themes'
 import { todayStr } from '../utils'
 import { SECTIONS, type SectionLabel } from '../labels'
 
@@ -45,8 +45,6 @@ export default function EntryForm({
     doit: initial?.doit ?? '',
     success: initial?.success ?? '',
   })
-  const [themeId, setThemeId] = useState(initial?.themeId ?? settings.defaultThemeId)
-
   const book = books.find((b) => b.id === bookId)
   const canSave =
     !!bookId && !!date && (texts.read.trim() || texts.note.trim() || texts.doit.trim())
@@ -63,7 +61,7 @@ export default function EntryForm({
       note: texts.note.trim(),
       doit: texts.doit.trim(),
       success: texts.success.trim() || undefined,
-      themeId,
+      themeId: DEFAULT_THEME_ID,
       createdAt: initial?.createdAt ?? new Date().toISOString(),
     })
   }
@@ -141,21 +139,6 @@ export default function EntryForm({
             />
           </div>
         ))}
-
-        <div className="field">
-          <label>카드 컬러</label>
-          <div className="theme-grid">
-            {THEMES.map((t) => (
-              <button
-                key={t.id}
-                className={`theme-swatch ${t.id === themeId ? 'active' : ''}`}
-                style={{ background: t.bg, color: t.ink }}
-                title={t.name}
-                onClick={() => setThemeId(t.id)}
-              />
-            ))}
-          </div>
-        </div>
 
         <button className="btn" disabled={!canSave} onClick={save}>
           {initial ? '수정 완료' : '기록 저장'}

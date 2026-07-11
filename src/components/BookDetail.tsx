@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import type { Book, Entry } from '../types'
-import { getTheme, THEMES } from '../themes'
+import { SPINE_COLORS } from '../themes'
 import { bookDayIndex, progressPercent, sortEntriesDesc } from '../utils'
 import EntryListItem from './EntryListItem'
 
@@ -15,7 +15,7 @@ interface Props {
 
 export function bookPlaceholderTheme(book: Book) {
   const hash = [...book.id].reduce((a, c) => a + c.charCodeAt(0), 0)
-  return THEMES[hash % THEMES.length]
+  return SPINE_COLORS[hash % SPINE_COLORS.length]
 }
 
 const STATUS_LABEL: Record<Book['status'], string> = {
