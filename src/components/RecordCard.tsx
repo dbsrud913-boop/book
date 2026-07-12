@@ -1,4 +1,4 @@
-import { forwardRef, useLayoutEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { Book, Entry, Settings } from '../types'
 import { getTheme } from '../themes'
 import { bookDayIndex, totalRecordedDays } from '../utils'
@@ -32,19 +32,31 @@ const RecordCard = forwardRef<HTMLDivElement, Props>(function RecordCard(
 
   const innerRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(1)
+  const [fitKey, setFitKey] = useState(0)
 
   useLayoutEffect(() => {
     setScale(1)
-  }, [entry.id, entry.read, entry.note, entry.doit, entry.success, ratio])
+  }, [entry.id, entry.read, entry.note, entry.doit, entry.success, ratio, fitKey])
 
   // 내용이 넘치면 한 단계씩 글자를 줄여가며 카드 안에 맞춘다
   useLayoutEffect(() => {
     const el = innerRef.current
     if (!el) return
-    if (el.scrollHeight > el.clientHeight + 1 && scale > 0.6) {
-      setScale((s) => Math.max(0.6, +(s - 0.04).toFixed(2)))
+    if (el.scrollHeight > el.clientHeight + 1 && scale > 0.42) {
+      setScale((s) => Math.max(0.42, +(s - 0.04).toFixed(2)))
     }
   })
+
+  // 웹폰트(명조·손글씨)가 늦게 로드되면 글자 높이가 달라지므로 로드 후 다시 맞춘다
+  useEffect(() => {
+    let alive = true
+    document.fonts?.ready?.then(() => {
+      if (alive) setFitKey((k) => k + 1)
+    })
+    return () => {
+      alive = false
+    }
+  }, [])
 
   const panelBg = `color-mix(in srgb, ${t.ink} 7%, transparent)`
   const chipBg = `color-mix(in srgb, ${t.accent} 12%, transparent)`

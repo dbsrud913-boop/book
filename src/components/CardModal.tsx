@@ -35,6 +35,9 @@ export default function CardModal({
     if (!cardRef.current || saving) return
     setSaving(true)
     try {
+      // 웹폰트 로드·글자 자동 맞춤이 끝난 뒤에 캡처한다 (안 그러면 아래가 잘릴 수 있음)
+      await (document.fonts?.ready ?? Promise.resolve())
+      await new Promise((r) => setTimeout(r, 400))
       // 인스타그램 규격으로 내보내기: 4:5 = 1080×1350, 1:1 = 1080×1080
       const dataUrl = await toPng(cardRef.current, {
         cacheBust: true,
