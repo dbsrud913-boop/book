@@ -4,6 +4,13 @@ import { uid } from '../storage'
 import { DEFAULT_THEME_ID } from '../themes'
 import { todayStr } from '../utils'
 import { SECTIONS, type SectionLabel } from '../labels'
+import { bookPlaceholderTheme } from './BookDetail'
+
+const STATUS_LABEL: Record<Book['status'], string> = {
+  reading: '읽는 중',
+  done: '완독',
+  paused: '보류',
+}
 
 interface Props {
   books: Book[]
@@ -26,16 +33,24 @@ export default function EntryForm({
   onClose,
   onAddBook,
 }: Props) {
-  const readingBooks = books.filter(
-    (b) => b.status !== 'done' || b.id === initial?.bookId || b.id === defaultBookId,
-  )
   const preset =
     initial?.bookId ??
-    (defaultBookId && readingBooks.some((b) => b.id === defaultBookId)
+    (defaultBookId && books.some((b) => b.id === defaultBookId)
       ? defaultBookId
-      : readingBooks[0]?.id) ??
+      : books.find((b) => b.status === 'reading')?.id) ??
+    books[0]?.id ??
     ''
   const [bookId, setBookId] = useState(preset)
+  const [showPicker, setShowPicker] = useState(false)
+  const [pickerQuery, setPickerQuery] = useState('')
+
+  // 칩에는 '읽는 중'인 책 + 현재 선택된 책만 — 나머지는 '책 찾기'로
+  const chipBooks = books.filter((b) => b.status === 'reading' || b.id === bookId)
+  const pickerBooks = books.filter((b) => {
+    const q = pickerQuery.trim().toLowerCase()
+    if (!q) return true
+    return b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q)
+  })
   const [date, setDate] = useState(initial?.date ?? todayStr())
   const [page, setPage] = useState(initial ? String(initial.page || '') : '')
   const [minutes, setMinutes] = useState(initial?.minutes ? String(initial.minutes) : '')
@@ -79,7 +94,7 @@ export default function EntryForm({
         <div className="field">
           <label>어떤 책인가요?</label>
           <div className="book-chips">
-            {readingBooks.map((b) => (
+            {chipBooks.map((b) => (
               <button
                 key={b.id}
                 className={`book-chip ${b.id === bookId ? 'active' : ''}`}
@@ -89,6 +104,11 @@ export default function EntryForm({
                 <span>{b.title}</span>
               </button>
             ))}
+            {books.length > chipBooks.length && (
+              <button className="book-chip" onClick={() => setShowPicker(true)}>
+                🔍 책 찾기
+              </button>
+            )}
             <button className="book-chip" onClick={onAddBook}>
               ＋ 새 책
             </button>
@@ -149,6 +169,70 @@ export default function EntryForm({
           </p>
         )}
       </div>
+
+      {showPicker && (
+        <div
+          className="modal-back"
+          onClick={(e) => {
+            e.stopPropagation()
+            setShowPicker(false)
+          }}
+        >
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-head">
+              <h2>책 선택</h2>
+              <button onClick={() => setShowPicker(false)} aria-label="닫기">
+                ✕
+              </button>
+            </div>
+            <div className="field">
+              <input
+                autoFocus
+                value={pickerQuery}
+                onChange={(e) => setPickerQuery(e.target.value)}
+                placeholder="책 제목이나 저자로 찾기"
+              />
+            </div>
+            <div className="search-results">
+              {pickerBooks.length === 0 ? (
+                <p className="search-msg" style={{ padding: '14px 12px' }}>
+                  찾는 책이 없어요.
+                </p>
+              ) : (
+                pickerBooks.map((b) => {
+                  const ph = bookPlaceholderTheme(b)
+                  return (
+                    <button
+                      key={b.id}
+                      className="sr-item"
+                      onClick={() => {
+                        setBookId(b.id)
+                        setShowPicker(false)
+                        setPickerQuery('')
+                      }}
+                    >
+                      {b.coverDataUrl ? (
+                        <img src={b.coverDataUrl} alt="" />
+                      ) : (
+                        <div className="sr-ph" style={{ background: ph.bg }}>
+                          📖
+                        </div>
+                      )}
+                      <span className="sr-info">
+                        <span className="t">{b.title}</span>
+                        <span className="a">
+                          {STATUS_LABEL[b.status]}
+                          {b.author ? ` · ${b.author}` : ''}
+                        </span>
+                      </span>
+                    </button>
+                  )
+                })
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
