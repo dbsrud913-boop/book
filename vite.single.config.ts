@@ -8,4 +8,9 @@ export default defineConfig({
   build: {
     outDir: 'dist-single',
   },
+  define: {
+    __BUILD_TIME__: JSON.stringify(
+      new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(5, 16).replace('T', ' '),
+    ),
+  },
 })

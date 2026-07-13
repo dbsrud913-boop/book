@@ -797,7 +797,7 @@ function SettingsTab({
         </a>
       </div>
 
-      <p className="set-version">책에 묻다 · 오늘의 독서 v1.0.0</p>
+      <p className="set-version">책에 묻다 · 오늘의 독서 v1.0 · 업데이트 {__BUILD_TIME__}</p>
     </>
   )
 }
