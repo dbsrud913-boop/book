@@ -678,7 +678,7 @@ function SettingsTab({
               <input
                 value={data.settings.signature}
                 onChange={(e) => onUpdate({ signature: e.target.value })}
-                placeholder="예: 와이작가"
+                placeholder="예: 베러윤"
               />
             </div>
           </div>
@@ -707,7 +707,7 @@ function SettingsTab({
               <input
                 value={data.settings.signature}
                 onChange={(e) => onUpdate({ signature: e.target.value })}
-                placeholder="예: 와이작가"
+                placeholder="예: 베러윤"
               />
             </div>
           </div>
