@@ -299,11 +299,11 @@ function TodayTab({
           <>
             <div className="hero-sub">아직 오늘의 기록이 없어요</div>
             <div className="hero-q">
-              책 속 문장이 오늘,
+              오늘 책 속 어느 문장이
               <br />
               나에게 어떤 질문을 던졌나요?
             </div>
-            <div className="hero-hint">질문을 받고, 생각을 남겨보세요.</div>
+            <div className="hero-hint">당신의 생각을 남겨보세요.</div>
             <button className="btn hero-btn" onClick={onWrite}>
               ✏️ 오늘의 기록 쓰기
             </button>
@@ -696,18 +696,18 @@ function SettingsTab({
           </div>
           <div className="set-row-body">
             <div className="t">카드 꾸미기</div>
-            <div className="d">카드 상단 라벨을 바꿔 보세요.</div>
+            <div className="d">카드에 들어갈 닉네임(서명)을 바꿔 보세요.</div>
           </div>
           <span className="de-chev">›</span>
         </button>
         {open === 'card' && (
           <div className="set-expand">
             <div className="field" style={{ marginBottom: 0 }}>
-              <label>카드 상단 라벨</label>
+              <label>닉네임 — 카드 하단에 ✎ 서명으로 들어가요</label>
               <input
-                value={data.settings.appLabel}
-                onChange={(e) => onUpdate({ appLabel: e.target.value })}
-                placeholder="예: 책에 묻다"
+                value={data.settings.signature}
+                onChange={(e) => onUpdate({ signature: e.target.value })}
+                placeholder="예: 와이작가"
               />
             </div>
           </div>
