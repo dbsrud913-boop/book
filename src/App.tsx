@@ -297,11 +297,11 @@ function TodayTab({
       <div className="hero">
         {todayEntries.length === 0 ? (
           <>
-            <div className="hero-sub">아직 오늘의 기록이 없어요</div>
+            <div className="hero-sub">아직 오늘의 기록이 없어요.</div>
             <div className="hero-q">
-              오늘 책 속 어느 문장이
+              오늘 책 속 문장은
               <br />
-              나에게 어떤 질문을 던졌나요?
+              나에게 무엇을 물었나요?
             </div>
             <div className="hero-hint">당신의 생각을 남겨보세요.</div>
             <button className="btn hero-btn" onClick={onWrite}>
