@@ -32,6 +32,7 @@ export interface Settings {
   signature: string // 카드 하단 서명 (예: @닉네임)
   defaultThemeId: string
   kakaoApiKey?: string // 카카오 REST API 키 — 책 검색용 (선택)
+  avatarDataUrl?: string // 프로필 사진 (data URL)
 }
 
 export interface JournalData {

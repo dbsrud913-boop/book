@@ -655,6 +655,27 @@ function SettingsTab({
   const [open, setOpen] = useState<string | null>(null)
   const toggle = (key: string) => setOpen((o) => (o === key ? null : key))
   const sig = data.settings.signature
+  const avatarRef = useRef<HTMLInputElement>(null)
+
+  function onPickAvatar(file: File) {
+    // 사진을 작게 리사이즈해서 저장 (원형 아바타용)
+    const img = new Image()
+    const url = URL.createObjectURL(file)
+    img.onload = () => {
+      const size = 200
+      const scale = Math.max(size / img.width, size / img.height)
+      const canvas = document.createElement('canvas')
+      canvas.width = size
+      canvas.height = size
+      const ctx = canvas.getContext('2d')!
+      const w = img.width * scale
+      const h = img.height * scale
+      ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h)
+      onUpdate({ avatarDataUrl: canvas.toDataURL('image/jpeg', 0.85) })
+      URL.revokeObjectURL(url)
+    }
+    img.src = url
+  }
 
   return (
     <>
@@ -662,7 +683,9 @@ function SettingsTab({
       <div className="set-group-title">👤 내 정보</div>
       <div className="set-card">
         <div className="set-profile">
-          <div className="avatar">📖</div>
+          <div className="avatar">
+            {data.settings.avatarDataUrl ? <img src={data.settings.avatarDataUrl} alt="" /> : '📖'}
+          </div>
           <div className="pinfo">
             <div className="nick">{sig ? `@${sig.replace(/^@/, '')}` : '@닉네임'}</div>
             <div className="bio">책을 통해 나를 발견하는 중</div>
@@ -673,6 +696,29 @@ function SettingsTab({
         </div>
         {open === 'profile' && (
           <div className="set-expand">
+            <div className="field">
+              <label>프로필 사진</label>
+              <input
+                ref={avatarRef}
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={(e) => e.target.files?.[0] && onPickAvatar(e.target.files[0])}
+              />
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <button className="btn secondary small" onClick={() => avatarRef.current?.click()}>
+                  사진 선택
+                </button>
+                {data.settings.avatarDataUrl && (
+                  <button
+                    className="btn ghost small"
+                    onClick={() => onUpdate({ avatarDataUrl: undefined })}
+                  >
+                    제거
+                  </button>
+                )}
+              </div>
+            </div>
             <div className="field" style={{ marginBottom: 0 }}>
               <label>닉네임 — 카드 하단 서명으로도 쓰여요</label>
               <input
@@ -688,33 +734,6 @@ function SettingsTab({
       {/* 앱 설정 */}
       <div className="set-group-title">🎨 앱 설정</div>
       <div className="set-card">
-        <button className="set-row" onClick={() => toggle('card')}>
-          <div className="mini-card">
-            <span className="mq">❝</span>
-            <span className="ml">{data.settings.appLabel}</span>
-            <span className="ms">{sig ? `@${sig.replace(/^@/, '')}` : '@닉네임'}</span>
-          </div>
-          <div className="set-row-body">
-            <div className="t">카드 꾸미기</div>
-            <div className="d">카드에 들어갈 닉네임(서명)을 바꿔 보세요.</div>
-          </div>
-          <span className="de-chev">›</span>
-        </button>
-        {open === 'card' && (
-          <div className="set-expand">
-            <div className="field" style={{ marginBottom: 0 }}>
-              <label>닉네임 — 카드 하단에 ✎ 서명으로 들어가요</label>
-              <input
-                value={data.settings.signature}
-                onChange={(e) => onUpdate({ signature: e.target.value })}
-                placeholder="예: 베러윤"
-              />
-            </div>
-          </div>
-        )}
-
-        <div className="set-divider" />
-
         <button className="set-row" onClick={() => toggle('search')}>
           <div className="set-tile" style={{ background: '#EDF0E1' }}>
             🔍
