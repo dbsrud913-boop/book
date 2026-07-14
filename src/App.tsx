@@ -789,6 +789,18 @@ function SettingsTab({
           style={{ display: 'none' }}
           onChange={(e) => e.target.files?.[0] && onPickFile(e.target.files[0])}
         />
+        <div className="set-divider" />
+        <button
+          className="set-reset"
+          onClick={() => {
+            if (!confirm(`책 ${data.books.length}권과 기록 ${data.entries.length}개를 모두 삭제할까요?`)) return
+            if (!confirm('정말 삭제할까요? 되돌릴 수 없어요. (닉네임·설정은 유지돼요)')) return
+            onImport({ version: 1, books: [], entries: [], settings: data.settings })
+            alert('초기화 완료! 새 마음으로 시작해 보세요.')
+          }}
+        >
+          🗑 모든 책·기록 초기화
+        </button>
       </div>
 
       {/* 기타 */}
